@@ -1,0 +1,11 @@
+Con la presente dichiarazione, Io pippo macaluso confermo di aver fornito il mio consenso al trattamento dei dati personali da parte dell'Associazione di donazione sangue per le seguenti finalità:
+Fornire i risultati delle analisi della donazione di sangue I dati personali che verranno raccolti sono:
+Nome e cognome del donatore
+Codice fiscale del donatore
+Data di nascita del donatore
+Dati relativi alla donazione di sangue, come ad esempio la data della donazione, il tipo di sangue donato e i risultati delle analisi
+Il consenso fornito è valido per un periodo di tempo illimitato.
+L'utente può revocare il consenso in qualsiasi momento, contattando l'Associazione di donazione sangue all'indirizzo [indirizzo email] o al numero [numero di telefono].
+L'Associazione di donazione sangue si impegna a trattare i dati personali degli utenti in modo sicuro e conforme alla legge.
+L'Associazione di donazione sangue si riserva il diritto di modificare la presente dichiarazione di consenso in qualsiasi momento.;
+Data: '.2023-11-14_20-22-51'
