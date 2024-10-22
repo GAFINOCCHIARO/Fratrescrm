@@ -6,8 +6,10 @@ namespace App\Models;
 
 use CodeIgniter\Shield\Models\UserModel as ShieldUserModel;
 
+
 class UserModel extends ShieldUserModel
 {
+   // protected $returnType = 'App\Entities\UserEntity'; // Uso la mia entità personalizzata
     protected function initialize(): void
     {
         parent::initialize();
