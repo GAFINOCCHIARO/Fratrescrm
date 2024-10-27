@@ -19,7 +19,7 @@
     <div class="w3-container w3-section w3-margin-top">
         <!-- begin comand menu edit user-->
         <div class="w3-bar w3-dark-grey w3-large w3-margin">
-            <a href="<?php echo site_url('/AdimnHome'); ?>" class=" w3-xxlarge w3-left w3-btn" title="<?php echo lang('Auth.goadminmenu'); ?>"
+            <a href="<?php echo site_url('/AdminHome'); ?>" class=" w3-xxlarge w3-left w3-btn" title="<?php echo lang('Auth.goadminmenu'); ?>"
                 style="margin-left:25px; margin-top:8px;" onclick="$('#loading').show();">
                 <i class="fa fa-home" aria-hidden="true"></i>
             </a>

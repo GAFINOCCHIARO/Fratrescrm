@@ -1,7 +1,7 @@
 <?php
 
 return [
-
+    'btnattivautente'=>'Attiva',
     'noregisrationcomplete' => 'Sembra che non hai completato la registrazione della tua azienda, vai alla sezione Dati
      associazione e compleata la tua iscrizione ',
     'noupdate' => 'Nulla da aggiornare',
@@ -177,7 +177,6 @@ return [
     'newUser' => 'Nuovo donatore',
     'esci' => 'Logout',
     'tabellanuoviutenti' => 'Elenco Nuovi utenti da verificare',
-    'btnattivautente' => 'Auth.btnattivautente',
     'tabellautenti' => 'Elenco utenti ',
     'btneditutente' => 'Edit',
     'btnEditUtenteExsam' => 'Storico Esami',

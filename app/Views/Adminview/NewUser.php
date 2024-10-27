@@ -18,7 +18,7 @@
         <div class="w3-container w3-section w3-margin-top">
             <!-- begin comand menu edit user-->
             <div class="w3-bar w3-dark-grey w3-large w3-margin">
-                <a href="<?php echo site_url('/AdimnHome'); ?>" class=" w3-xxlarge w3-left" title="<?php echo lang('Auth.goadminmenu'); ?>" style="margin-left:25px; margin-top:8px;" onclick="$('#loading').show();">
+                <a href="<?php echo site_url('/AdminHome'); ?>" class=" w3-xxlarge w3-left" title="<?php echo lang('Auth.goadminmenu'); ?>" style="margin-left:25px; margin-top:8px;" onclick="$('#loading').show();">
                     <i class="fa fa-home" aria-hidden="true"></i>
                 </a>
             </div> <!-- end menu edit user-->
@@ -288,14 +288,18 @@
                         }
                         $('input[name="csrf_token"]').val(data.token);
                     }
-                    if (data.msg == 'ok') {
+                    if (data.msg == 'success') {
                         clearscreen();
                         $('input[name="csrf_token"]').val(data.token);
+                        window.location.href = `${window.location.origin}/AdminHome`;
+
+
                     }
                 },
             });
 
         });
+        /*
         $("#City_of_residence").autocomplete({
             source: function(request, response) {
                 // CSRF Hash
@@ -375,8 +379,9 @@
                 return false;
             },
         });
-
+        */
     });
+
     function clearscreen() {
         console.log("clerscreen");
         $("#errorfirst_name").html("  ");

@@ -283,7 +283,7 @@ class AdminController extends BaseController
         $company = $companyModel->find($user->id_association);
         $businesWorkHoursiscomplete= $businesHours->isBusinesHoursComplete($user->id_association);
         $isCompanyDatailComplete= $companyModel->check_registration_state($user->id_association);
-        echo $businesWorkHoursiscomplete.'<br>'. $isCompanyDatailComplete . '<br>';
+       // echo $businesWorkHoursiscomplete.'<br>'. $isCompanyDatailComplete . '<br>';
         $token = csrf_hash();
         $directory = './assets/avatar/';
         $files = array_diff(scandir($directory), ['.', '..']);
@@ -309,7 +309,7 @@ class AdminController extends BaseController
                 $originalFilename = $parts[2];
                 $fileList[] = [
                     'display_name' => $originalFilename,
-                    'filename' => $file, // Manteniamo il nome completo con timestamp per il download
+                    'filename' => $file, // mantengo  il nome completo con timestamp per il download
                     'timestamp' => $timestamp,
                     'idexsam' => $idexsam,
                 ];
@@ -987,7 +987,7 @@ class AdminController extends BaseController
                     'user_type' => 'donatore',
                     'avatar' => $postData['avatar'],
                     'unique_code' => 0,
-                    'authorized' => 1,
+                    'authorized' => 0,
                     'first_name' => $postData['first_name'],
                     'id_association' => $postData['id'],
                     'group_type' => $postData['group_type'],
@@ -1001,11 +1001,15 @@ class AdminController extends BaseController
                 $users->save($user);
                 $user = $users->findById($users->getInsertID());
                 $user->addGroup('user');
+                $user->addPermission('user.change_password', 'user.homeaccess');
                 $user->forcePasswordReset();
                 $emailManager = new EmailManager();
-                $emailManager->getMessage('welcome', $users->id_association, $user->id);
-
-                return redirect()->to('AdimnHome');
+                $emailManager->getMessage('welcome', $user->id_association, $user->id);
+                $risposta=[
+                    'msg' => 'success',
+                    'token' => $token,
+                ];
+                return $this->response->setJSON($risposta);
             }
         }
     }
@@ -1478,7 +1482,7 @@ class AdminController extends BaseController
             $user = auth()->getProvider();
             $user->delete($postData['id'], true);
 
-            return redirect()->redirect('/AdimnHome');
+            return redirect()->redirect('/AdminHome');
         }
     }
 
@@ -1751,19 +1755,7 @@ class AdminController extends BaseController
             // invia la mail
             $emailManager = new EmailManager();
             $emailManager->getMessage('New_exsam', $user->id_association, $id);
-            /*
-            $modelcompany = new ModelCompany();
-
-            $company = $modelcompany->select('*')
-                ->where('id_company ', $user->id_association)
-                ->first();
-            $email = \Config\Services::email();
-            $email->setTo($postData['emailto']);
-            $email->setFrom('GAETANO23_4@VIRGILIO.IT', $company->company_name);
-            $email->setSubject('Nuovo Referto');
-            $email->setMessage('Un nuovo referto  è stato caricato sulla tua area privata.Fai il login e scarica il risultato!!');
-            $email->send();
-            */
+          
             $risposta = [
                 'msg' => 'ok',
                 'token' => $token,

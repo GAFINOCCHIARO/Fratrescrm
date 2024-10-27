@@ -442,7 +442,7 @@ class Auth extends ShieldAuth
         
         $url = auth()->user()->inGroup('user')
             ? '/Homeuser'
-            : '/AdimnHome';
+            : '/AdminHome';
 
         return $this->getUrl($url);
     }

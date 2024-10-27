@@ -48,7 +48,7 @@ class OwnValidation
         if ($data['group_type'] == '') {
             return true;
         } else {
-            $regex = '/^(A|B|AB|O)(\+|-)?$/';
+            $regex = '/^(A|B|AB|O)(\+|-)?$/i';
 
             return preg_match($regex, $data['group_type']) ? true : false;
         }

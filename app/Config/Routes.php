@@ -20,7 +20,7 @@ $routes->group('', ['filter' => 'login'], static function ($routes) {
     $routes->post('UpdatePassword', 'AdminController::UpdatePassword', ['filter' => 'login:user.change_password']);
     $routes->post('Newpassword', 'AdminController::Newpassword', ['filter' => 'login:user.change_password']);
 
-    $routes->get('AdimnHome', 'AdminController::index', ['filter' => 'login:admin.dashboardacces']);
+    $routes->get('AdminHome', 'AdminController::index', ['filter' => 'login:admin.dashboardacces']);
     $routes->post('ActivateUser', 'AdminController::Activateuser', ['filter' => 'login:admin.activateuser']);
     $routes->post('EditUser', 'AdminController::EditUser', ['filter' => 'login:admin.edituser']);
     $routes->post('EditUserexsam', 'AdminController::EditUserexsam', ['filter' => 'login:admin.editexsam']);

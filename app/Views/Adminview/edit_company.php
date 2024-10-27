@@ -11,7 +11,7 @@
     <div class="w3-container">
         <?php echo csrf_field(); ?>
         <div class="w3-bar w3-dark-grey w3-large w3-margin-bottom w3-margin-top">
-            <a href="<?php echo site_url('/AdimnHome'); ?>" class=" w3-xxlarge w3-left"
+            <a href="<?php echo site_url('/AdminHome'); ?>" class=" w3-xxlarge w3-left"
                 title="<?php echo lang('Auth.goadminmenu'); ?>" style="margin-left:25px; margin-top:8px;"
                 onclick="$('#loading').show();">
                 <i class="fa fa-home" aria-hidden="true"></i>

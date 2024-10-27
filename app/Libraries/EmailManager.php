@@ -16,7 +16,7 @@ class EmailManager
     }
     private function changeplaceholder($bodymessage, $idassociation, $iduser, $idappointment)
     {
-
+       
         $user = auth()->user();
         $user = auth()->getProvider();
         $user = $user->findById($iduser); //oggetto cliente o donatore
@@ -68,7 +68,7 @@ class EmailManager
         $customMessage = $this->emailModel->getCustomMessage($type, $idassociation);
 
         if ($customMessage) {
-            $this->changeplaceholder($customMessage, $idassociation, $iduser, $iduser,$idappointment);
+            $this->changeplaceholder($customMessage, $idassociation, $iduser,$idappointment);
         }
 
         // Se non esiste un messaggio personalizzato, utilizza il messaggio di default
