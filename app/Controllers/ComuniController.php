@@ -16,9 +16,7 @@ class ComuniController extends BaseController
          $postData = $request->getPost();
 
          $response = array();
-
-         // Read new token and assign in $response['token']
-      //   $token = csrf_hash();
+        $token = csrf_hash();
          $data = array();
 
          if(isset($postData['search'])){
@@ -42,7 +40,7 @@ class ComuniController extends BaseController
 
          $response= [
                'result'=>$data,
-               //'token'=>$token,
+               'token'=>$token,
          ];
         // var_dump($response);
          return $this->response->setJSON($response);

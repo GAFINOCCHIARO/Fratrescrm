@@ -6,7 +6,9 @@ use App\Entities\BusinessHoursEntity as hoursentity;
 use App\Entities\CompanyEntities as companyentities;
 use App\Models\BusinessHoursModel as hoursmodel;
 use App\Models\CompanyModels as companymodel;
+use App\Models\PrivacypoliciesModel as privacymodel;
 use CodeIgniter\Shield\Entities\User;
+use CodeIgniter\I18n\Time;
 
 class CompanyController extends BaseController
 {
@@ -24,7 +26,7 @@ class CompanyController extends BaseController
     }
     private function getCompanyInputValidateactionupdate()
     {
-        $user=auth()->user();
+        $user = auth()->user();
         $rules = [
             'company_name' => [
                 'rules' => [
@@ -79,11 +81,11 @@ class CompanyController extends BaseController
                     'is_unique[company.company_email,company.id_company,' . $user->id_association . ']',
                 ],
             ],
-            'president_name'=>[
-                'rules'=>[
+            'president_name' => [
+                'rules' => [
                     'required',
                     'max_length[50]',
-                     'min_length[5]',
+                    'min_length[5]',
                 ],
             ],
             'siteurl' => [
@@ -142,10 +144,10 @@ class CompanyController extends BaseController
                 'valid_email' => lang('Auth.companyEmail_valid'),
                 'is_unique' => lang('Auth.companyEmail_unique'),
             ],
-            'president_name'=>[
-                'required'=>lang('Auth.presidentRequired'),
-                'max_length[50]'=>lang('Auth.presidentMax_length'),
-                'min_length[5]'=> lang('Auth.presidentMin_length'),
+            'president_name' => [
+                'required' => lang('Auth.presidentRequired'),
+                'max_length[50]' => lang('Auth.presidentMax_length'),
+                'min_length[5]' => lang('Auth.presidentMin_length'),
             ],
             'siteurl' => [
                 'valid_url' => lang('Auth.validUrl'),
@@ -155,7 +157,7 @@ class CompanyController extends BaseController
                 'integer' => lang('Auth.armchairsinteger'),
                 'greater_than_equal_to' => lang('Auth.armchairseqaulto')
             ],
-            'open_time1'=>[
+            'open_time1' => [
                 'regex_match' => lang('Auth.opentimeregex_match'),
             ],
             'open_time2' => [
@@ -446,7 +448,13 @@ class CompanyController extends BaseController
                     'valid_email',
                     'is_unique[auth_identities.secret]',
                 ],
-            ],   
+            ],
+            'gender'=>[
+                'rules' => [
+                    'required',
+                    'in_list[M,F]',
+                ],
+            ],
         ];
         $errors = [
             'first_name' => [
@@ -546,6 +554,10 @@ class CompanyController extends BaseController
                 'min_length' => lang('Auth.prbmin_length'),
                 'regex_match' => lang('Auth.prbreregex_match'),
             ],
+            'gender'=> [
+                'required' => lang('Auth.genderRequired'),
+                'in_list' => lang('Auth.genderInlist'),
+            ],
         ];
         return ['rules' => $rules, 'errors' => $errors];
     }
@@ -566,93 +578,96 @@ class CompanyController extends BaseController
         $request = service('request');
         $postData = $request->getPost();
         if ($this->request->getPost()) {
-                                        $uservalidation = $this->getUserInputValidation();
-                                        $validation = $this->getCompanyInputValidate();
-                                        $companyRules = $validation['rules'];
-                                        $companyError = $validation['errors'];
-                                        $uservalidation = $this->getUserInputValidation();
-                                        $userRules=  $uservalidation['rules'];
-                                        $UserErrors= $uservalidation['errors'];
-                                        $validationRules = array_merge($companyRules,$userRules);
-                                        $validationErrors= array_merge($companyError,$UserErrors);
-                                          if (!$this->validate($validationRules, $validationErrors)) {
-                                                                                                      $data['validation'] = $this->validator;        
-                                                                                                        return redirect()->back()->withInput()->with('errors', $this->validator->getErrors());
-                                                                                                     } else {
-                                                                                                                $companyEntity = new companyentities();
-                                                                                                                $company = new companymodel();
-                                                                                                                $datacompany = [
-                                                                                                                    'company_name' => $postData['company_name'],
-                                                                                                                    'company_group' => $postData['group_name'],
-                                                                                                                    'company_address' => $postData['company_address'],
-                                                                                                                    'company_city' => $postData['company_city'],
-                                                                                                                    'company_phone' => $postData['company_phone'],
-                                                                                                                    'company_vat' => $postData['company_vat'],
-                                                                                                                    'company_email' => $postData['companyemail'],
-                                                                                                                    'company_site_url' => null,
-                                                                                                                    'president_name' => null,
-                                                                                                                    'number_armchairs' => null,
-                                                                                                                    'agenda_code' => null,
-                                                                                                                    'registration_date' => $companyEntity->day(),
-                                                                                                                    'subscription_expires' => $companyEntity->subscription_expires(),
-                                                                                                                    'number_renewals' => 0,
-                                                                                                                    'dplasma' => null,
-                                                                                                                    'dpiastrine' => null,
-                                                                                                                    'dsangue' => null,
-                                                                                                                    'agendacoderefer' => null,
-                                                                                                                ];
-                                                                                                                $companyEntity->fill($datacompany);
-                                                                                                                $company->save($companyEntity);
-                                                                                                                 $lastid = $company->getInsertID();
-                                                                                                                    $newuser = [
-                                                                                                                        'username' => null,
-                                                                                                                        'email' => $postData['email'],
-                                                                                                                        'password' => $postData['passwordInput'],
-                                                                                                                        'surname' => $postData['surname'],
-                                                                                                                        'address' => $postData['address'],
-                                                                                                                        'City_of_residence' => $postData['city_of_residence'],
-                                                                                                                        'Province_of_residence' => $postData['Province_of_residence'],
-                                                                                                                        'state_of_residence' => $postData['state_of_residence'],
-                                                                                                                        'zip_code' => $postData['zip_code'],
-                                                                                                                        'phone_number' => $postData['phone_number'],
-                                                                                                                        'Tax_code' => $postData['Tax_code'],
-                                                                                                                        'date_of_birth' => $postData['date_of_birth'],
-                                                                                                                        'birth_status' => $postData['birth_status'],
-                                                                                                                        'County_of_birth' => $postData['County_of_birth'],
-                                                                                                                        'birth_place' => $postData['birth_place'],
-                                                                                                                        'zip_codebirth' => $postData['zip_codebirth'],
-                                                                                                                        'document_type' => $postData['document_type'],
-                                                                                                                        'document_number' => $postData['document_number'],
-                                                                                                                        'user_type' => 'donatore',
-                                                                                                                        'avatar' => '/assets/avatar/avatar_default.jpg',
-                                                                                                                        'unique_code' => 0,
-                                                                                                                        'authorized' => 1,
-                                                                                                                        'first_name' => $postData['first_name'],
-                                                                                                                        'id_association' => $lastid,
-                                                                                                                    ];
-                                                                                                                    $user = new user($newuser);
-                                                                                                                     $users = auth()->getProvider();
-                                                                                                                     $users->save($user);
-                                                                                                                     $user = $users->findById($users->getInsertID());
-                                                                                                                     $user->addGroup('superadmin');
-                                                                                                                     $modelhours = new hoursmodel();
-                                                                                                                     $week = ['Lunedì', 'Martedì', 'Mercoledì', 'Giovedì', 'Venerdì', 'Sabato', 'Domenica'];
-                                                                                                                    foreach ($week as $day) {
-                                                                                                                                                $hours = new hoursentity();
-                                                                                                                                                $datahourswork = [
-                                                                                                                                                    'company_id' => $lastid,
-                                                                                                                                                    'day_of_week' => $day,
-                                                                                                                                                    'open_time1' => null,
-                                                                                                                                                    'close_time1' => null,
-                                                                                                                                                    'open_time2' => null,
-                                                                                                                                                    'close_time2' => null,
-                                                                                                                                                ];
-                                                                                                                                                $hours->fill($datahourswork);
-                                                                                                                                                $modelhours->save($hours);
-                                                                                                                                            }
-                                                                                                             return redirect()->to('login');
-                                                                                                            }
-                                      }
+            $uservalidation = $this->getUserInputValidation();
+            $validation = $this->getCompanyInputValidate();
+            $companyRules = $validation['rules'];
+            $companyError = $validation['errors'];
+            $uservalidation = $this->getUserInputValidation();
+            $userRules =  $uservalidation['rules'];
+            $UserErrors = $uservalidation['errors'];
+            $validationRules = array_merge($companyRules, $userRules);
+            $validationErrors = array_merge($companyError, $UserErrors);
+            if (!$this->validate($validationRules, $validationErrors)) {
+                $data['validation'] = $this->validator;
+                return redirect()->back()->withInput()->with('errors', $this->validator->getErrors());
+            } else {
+                $companyEntity = new companyentities();
+                $company = new companymodel();
+                $datacompany = [
+                    'company_name' => $postData['company_name'],
+                    'company_group' => $postData['group_name'],
+                    'company_address' => $postData['company_address'],
+                    'company_city' => $postData['company_city'],
+                    'company_phone' => $postData['company_phone'],
+                    'company_vat' => $postData['company_vat'],
+                    'company_email' => $postData['companyemail'],
+                    'company_site_url' => null,
+                    'president_name' => null,
+                    'number_armchairs' => null,
+                    'agenda_code' => null,
+                    'registration_date' => $companyEntity->day(),
+                    'subscription_expires' => $companyEntity->subscription_expires(),
+                    'number_renewals' => 0,
+                    'dplasma' => null,
+                    'dpiastrine' => null,
+                    'dsangue' => null,
+                    'agendacoderefer' => null,
+                ];
+                $companyEntity->fill($datacompany);
+                $company->save($companyEntity);
+                $lastid = $company->getInsertID();
+                $modelhours = new hoursmodel();
+                $week = ['Lunedì', 'Martedì', 'Mercoledì', 'Giovedì', 'Venerdì', 'Sabato', 'Domenica'];
+                foreach ($week as $day) {
+                    $hours = new hoursentity();
+                    $datahourswork = [
+                        'company_id' => $lastid,
+                        'day_of_week' => $day,
+                        'open_time1' => null,
+                        'close_time1' => null,
+                        'open_time2' => null,
+                        'close_time2' => null,
+                    ];
+                    $hours->fill($datahourswork);
+                    $modelhours->save($hours);
+                }
+                $newuser = [
+                    'username' => null,
+                    'email' => $postData['email'],
+                    'password' => $postData['passwordInput'],
+                    'surname' => $postData['surname'],
+                    'address' => $postData['address'],
+                    'City_of_residence' => $postData['city_of_residence'],
+                    'Province_of_residence' => $postData['Province_of_residence'],
+                    'state_of_residence' => $postData['state_of_residence'],
+                    'zip_code' => $postData['zip_code'],
+                    'phone_number' => $postData['phone_number'],
+                    'Tax_code' => $postData['Tax_code'],
+                    'date_of_birth' => $postData['date_of_birth'],
+                    'birth_status' => $postData['birth_status'],
+                    'County_of_birth' => $postData['County_of_birth'],
+                    'birth_place' => $postData['birth_place'],
+                    'zip_codebirth' => $postData['zip_codebirth'],
+                    'document_type' => $postData['document_type'],
+                    'document_number' => $postData['document_number'],
+                    'user_type' => 'donatore',
+                    'avatar' => '/assets/avatar/avatar_default.jpg',
+                    'unique_code' => 0,
+                    'authorized' => 1,
+                    'first_name' => $postData['first_name'],
+                    'id_association' => $lastid,
+                    'gender'=>$postData['gender'],
+                    'salt' => bin2hex(random_bytes(16)),
+
+                ];
+                $user = new user($newuser);
+                $users = auth()->getProvider();
+                $users->save($user);
+                $user = $users->findById($users->getInsertID());
+                $user->addGroup('superadmin');               
+                return redirect()->to('login');
+            }
+        }
     }
 
     public function editCompanyprofile()
@@ -674,6 +689,11 @@ class CompanyController extends BaseController
         $data = [];
 
         return view('registration\new_company', $data);
+    }
+
+    public function InsertPrivacyPolicy()
+    {
+        return view('Adminview\editprivacypolicy');
     }
 
     public function UpdateCompanydata()
@@ -725,11 +745,11 @@ class CompanyController extends BaseController
                         'number_armchairs' => $postData['number_armchairs'],
                         'agenda_code' => $agendacode,
                         'dplasma'    => ($postData['dplasma'] == true) ? 1 : 0,
-                        'dpiastrine' => ($postData['dpiastrine']==true) ? 1 : 0,
-                        'dsangue'    => ($postData['dsangue']==true) ? 1 : 0,
+                        'dpiastrine' => ($postData['dpiastrine'] == true) ? 1 : 0,
+                        'dsangue'    => ($postData['dsangue'] == true) ? 1 : 0,
                         'agendacoderefer' => $postData['agendacoderefer'] ?? null,
                     ];
-                    
+
                     try {
                         $company->update($user->id_association, $datacompany);
                     } catch (\Exception $e) {
@@ -762,6 +782,55 @@ class CompanyController extends BaseController
                     return $this->response->setJSON($risposta);
                 }
             }
+        }
+    }
+    public function Saveprivacypolicy()
+    {
+        $request = service('request');
+        $postData = $request->getPost();
+        $token = csrf_hash();
+        $rules = [
+            'privacytext' => 'required',
+        ];
+        $error = [
+            'privacytext' => lang('idnonvalido'),
+        ];
+        if (!$this->validate($rules, $error)) {
+            $data = $this->validator->getErrors();
+            foreach ($data as $error) {
+                $er[] = $error;
+            }
+            $risposta = [
+                'msg' => 'fail',
+                'listerror' => $er,
+                'token' => $token,
+            ];
+            header('Content-Type: application/json');
+
+            return $this->response->setJSON($risposta);
+        } else {
+            $user = auth()->user();
+            $privacypolicy = $postData['privacytext'];
+            $modelprvacy = new privacymodel();
+            $privacydata = [
+                'company_id' => $user->id_association,
+                'version' => 1,
+                'policy_text' => $privacypolicy,
+                'created_at' => Time::today(),
+                'is_active' => 0,
+                'is_draft' => 1,
+
+            ];
+            $modelprvacy->save($privacydata);
+            $risposta = [
+                'msg' => 'ok',
+                'token' => $token,
+                'id' => $postData['id'],
+            ];
+            //  $this->SendEmail($to, $subject,$from,$name,$message);
+            header('Content-Type: application/json');
+
+            return $this->response->setJSON($risposta);
         }
     }
 }

@@ -2,7 +2,7 @@
 <html lang="en">
 
 <head>
-    
+
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="/assets/css/style.css">
@@ -36,8 +36,9 @@
                     <label for="taxcode"><?php echo lang('Auth.Tax_code'); ?></label>
                     <input type="text" class="w3-input  w3-border w3-round-xlarge" id="taxcode" name="taxcode" placeholder="<?php echo lang('Auth.Tax_code'); ?>">
                     <input type="hidden" id="taxcodefound" name="taxcodefound">
+                    <input type="hidden" name="iduserfound" id="iduserfound">
                     <input type="hidden" name="filename" id="filename" value="<?php echo esc($filename); ?>">
-                    <input type="hidden" name="emailto" id="emailto" >
+                    <input type="hidden" name="emailto" id="emailto">
                 </div>
             </div> <!-- fine rigo ricerca-->
 
@@ -55,8 +56,8 @@
                             <p id="contact_result"></p>
                         </span>
                         <button class="w3-button w3-teal w3-round-large w3-hover-green" id="confirmed" onclick="$('#confirmedbox').show();"><?php echo lang('Auth.confirmedbox'); ?></button>
-                        <button class="w3-button w3-teal w3-round-large w3-hover-yellow " id="sendamessagge"><?php echo lang('Auth.sendamessagge'); ?></button>
-                        <button class="w3-button w3-teal w3-round-large w3-hover-amber" id="nextreport"><?php echo lang('Auth.nextreport'); ?></button>
+                        <!--     <button class="w3-button w3-teal w3-round-large w3-hover-yellow " id="sendamessagge"><?php echo lang('Auth.sendamessagge'); ?></button>
+                        <button class="w3-button w3-teal w3-round-large w3-hover-amber" id="nextreport"><?php echo lang('Auth.nextreport'); ?></button>-->
                     </div>
                 </ul>
             </div> <!-- fine    card risultato ricerca-->
@@ -64,9 +65,9 @@
 
             <!-- fine confirmed-->
             <!-- mostra report-->
-              <iframe src="<?php echo $pdf; ?>" frameborder="0" width="100%" height="70%"></iframe>
-           <!-- <embed src=>" type="application/pdf" width="100%" height="70%">-->
-           
+            <iframe src="<?php echo $pdf; ?>" frameborder="0" width="100%" height="70%"></iframe>
+            <!-- <embed src=>" type="application/pdf" width="100%" height="70%">-->
+
         </div>
 
         <div id="loading" class="w3-modal w3-white w3-opacity" style="display:none">
@@ -81,26 +82,26 @@
                 <div class="w3-container">
                     <div class="w3-row-padding ">
                         <label for="renamefile"><?php echo lang('Auth.rename_file'); ?></label>
-                        <input type="text" name="renamefile" id="renamefile" class="w3-input w3-border w3-round-large" 
-                               placeholder="<?php echo lang('Auth.help_rename_file'); ?>" title="<?php echo lang('Auth.explain_help_rename'); ?>">
+                        <input type="text" name="renamefile" id="renamefile" class="w3-input w3-border w3-round-large"
+                            placeholder="<?php echo lang('Auth.help_rename_file'); ?>" title="<?php echo lang('Auth.explain_help_rename'); ?>">
                     </div>
                     <div class="w3-row-padding">
                         <label for="noteinpdf"><?php echo lang('Auth.textnoteinpdf'); ?></label>
                         <textarea name="noteinpdf" id="noteinpdf" class="w3-input w3-border w3-round-large"></textarea>
-                         <p id="errornoteinpdf" class="w3-text-red"> </p>
+                        <p id="errornoteinpdf" class="w3-text-red"> </p>
                     </div>
                     <div class="w3-row-padding">
                         <div class="w3-half">
                             <label for="donationdate"><?php echo lang('Auth.Donationdate'); ?></label>
                             <input type="date" name="donationdate" id="donationdate" class="w3-input w3-border w3-round-xlarge">
-                             <p id="errordonationdate" class="w3-text-red"> </p>
+                            <p id="errordonationdate" class="w3-text-red"> </p>
                         </div>
                         <div class="w3-half">
                             <label for="danationtype"><?php echo lang('Auth.donationTypeLabel'); ?></label>
                             <select name="danationtype" id="danationtype" class="w3-select w3-border w3-round-xlarge">
                                 <option value="0"><?php echo lang('Auth.select'); ?></option>
                                 <option value="sangue"><?php echo lang('Auth.sangue');    ?></option>
-                                <option value="plasma">   <?php echo lang('Auth.plasma');    ?></option>
+                                <option value="plasma"> <?php echo lang('Auth.plasma');    ?></option>
                                 <option value="piastrine"><?php echo lang('Auth.piastrine'); ?></option>
                             </select>
                             <p id="errordanationtype" class="w3-text-red"> </p>
@@ -123,10 +124,10 @@
                         </div>
                     </div>
                     <div class="w3-row-padding" id="stopnote" style="display: none;">
-                    <label for="notestop"><?php echo lang('Auth.notestopLabel'); ?></label>
-                     <input type="text" name="notestop" id="notestop" class="w3-input w3-round-xlarge w3-border" 
-                                      placeholder="<?php echo lang('Auth.notestopPlaceholder'); ?>">
-                       <p id="errornotestop" class="w3-text-red"> </p>
+                        <label for="notestop"><?php echo lang('Auth.notestopLabel'); ?></label>
+                        <input type="text" name="notestop" id="notestop" class="w3-input w3-round-xlarge w3-border"
+                            placeholder="<?php echo lang('Auth.notestopPlaceholder'); ?>">
+                        <p id="errornotestop" class="w3-text-red"> </p>
                     </div>
                     <button id="okreportisok" class="w3-green w3-round-large"><?php echo lang('Auth.okreportisok'); ?>
                     </button>
@@ -142,22 +143,23 @@
 </html>
 <script>
     function clearscreen() {
-        
+
         $("#errornoteinpdf").html("  ");
         $("#errordonationdate").html("  ");
         $("#errordanationtype").html("  ");
         $("#errordresult").html("  ");
         $("#errornotestop").html("  ");
         $("#errordaystop").html("  ");
-       
+
         $("#noteinpdf").removeClass("w3-border-red");
         $("#donationdate").removeClass("w3-border-red");
         $("#danationtype").removeClass("w3-border-red");
         $("#dresult").removeClass("w3-border-red");
         $("#notestop").removeClass("w3-border-red");
         $("#daystop").removeClass("w3-border-red");
-        
+
     }
+
     function inputdaystop(val) {
         if (val === 'ko') {
             $('#daystopdiv').show();
@@ -175,6 +177,7 @@
         var csrfName = 'csrf_token'; // CSRF Token name
         var csrfHash = $('input[name="csrf_token"]').val(); // CSRF hash
         var taxcodefound = $('#taxcodefound').val();
+        var iduserfound = $('#iduserfound').val();
         var emailto = $('#emailto').val();
         var oldfilename = $('#filename').val();
         var renamefile = $('#renamefile').val();
@@ -183,12 +186,12 @@
         var danationtype = $('#danationtype').val();
         var dresult = $('#dresult').val();
         var daystop = $('#daystop').val();
-         var notestop=$('#notestop').val();
+        var notestop = $('#notestop').val();
         if ((renamefile === '') || (renamefile.length === 0) || (renamefile === null)) {
             var renamefile = oldfilename;
         }
-       
-       
+
+
         $.ajax({
             type: "post",
             url: "<?php echo site_url('movefile'); ?>",
@@ -197,11 +200,12 @@
                 oldfilename: oldfilename,
                 emailto: emailto,
                 taxcodefound: taxcodefound,
-                noteinpdf:noteinpdf,
-                donationdate:donationdate,
-                danationtype:danationtype,
-                dresult:dresult,
-                daystop:daystop,
+                iduserfound: iduserfound,
+                noteinpdf: noteinpdf,
+                donationdate: donationdate,
+                danationtype: danationtype,
+                dresult: dresult,
+                daystop: daystop,
                 notestop: notestop,
                 [csrfName]: csrfHash,
                 typesearch: 2
@@ -210,30 +214,30 @@
             dataType: "json",
             success: function(data) {
                 $('input[name="csrf_token"]').val(data.token);
-                 if (data.msg == 'fail') {
+                if (data.msg == 'fail') {
                     clearscreen();
-                    for (const key in data.aer) {                          
-                     $("#error" + key).html(data.aer[key]);
-                      $("#" + key).addClass("w3-border-red");  // Accedo al valore della proprietà
+                    for (const key in data.aer) {
+                        $("#error" + key).html(data.aer[key]);
+                        $("#" + key).addClass("w3-border-red"); // Accedo al valore della proprietà
                     }
-                }else{
-                     var csrfName = 'csrf_token'; // CSRF Token name
-                      var csrfHash = $('input[name="csrf_token"]').val(); // CSRF hash 
+                } else {
+                    var csrfName = 'csrf_token'; // CSRF Token name
+                    var csrfHash = $('input[name="csrf_token"]').val(); // CSRF hash 
 
-                      $.ajax({
-                          type: "post",
-                          url: "<?php echo site_url('Managereportview'); ?>",
-                         data: {
-                                [csrfName]: csrfHash,
-                               },
-                               dataType: "html",
-                               success: function(data) {
-                               $('#loading').hide();
-                               $('#main').html(data)
-                               }
-                        });
-                     }
-        }
+                    $.ajax({
+                        type: "post",
+                        url: "<?php echo site_url('Managereportview'); ?>",
+                        data: {
+                            [csrfName]: csrfHash,
+                        },
+                        dataType: "html",
+                        success: function(data) {
+                            $('#loading').hide();
+                            $('#main').html(data)
+                        }
+                    });
+                }
+            }
 
         });
 
@@ -257,12 +261,14 @@
                 success: function(data) {
                     $('#loading').hide();
                     $('#searchresult').show();
+                    console.log(data);
                     if (!data.useredit.user.isuserfind) {
                         $('#name_result').html(data.useredit.user.erromsg);
                     } else {
                         $('#name_result').html(data.useredit.user.first_name + ' ' + data.useredit
                             .user.surname + ' ' + data.useredit.user.Tax_code);
                     }
+                    $('#iduserfound').val(data.useredit.user.id);
                     $('#taxcodefound').val(data.useredit.user.Tax_code);
                     $('#emailto').val(data.useredit.user.email);
                     $('#address_result').html(data.useredit.user.address);

@@ -1,6 +1,8 @@
 <?php
 
 return [
+    'textareaprovacypolicyplaceholder'=>'Immetti il testo della tua privacy policy',
+    'InsertPrivacyPolicy'=>'Privacy policy',
     'btnattivautente'=>'Attiva',
     'noregisrationcomplete' => 'Sembra che non hai completato la registrazione della tua azienda, vai alla sezione Dati
      associazione e compleata la tua iscrizione ',
@@ -63,7 +65,7 @@ return [
     'birth_place' => 'Città di nascita',
     'County_of_birth' => 'Provincia di nascita',
     'zip_codebirth' => 'Codice Postale',
-    'birth_status' => 'Stato di nascita',
+    'birth_status' => 'Regione',
     'date_of_birth' => 'Data di nascita',
     'document_type' => 'Tipo documento',
     'document_number' => 'Numero documento',
@@ -72,7 +74,7 @@ return [
     'City_of_residence' => 'Città di residenza',
     'Province_of_residence' => 'Provincia',
     'zip_code' => 'Codice postale',
-    'state_of_residence' => 'Nazione',
+    'state_of_residence' => 'Regione',
     'address' => 'Indirizzo ',
     'email' => 'Indirizzo Email....',
     'phone_number' => 'Numero telefonico',

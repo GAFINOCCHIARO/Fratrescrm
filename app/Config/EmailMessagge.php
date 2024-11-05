@@ -14,7 +14,6 @@ class EmailMessagge
                 <br>
                 Cosa aspettarsi:
                 <br>
-                Prossimi Eventi: <br>
                 Ti terremo aggiornato sui prossimi eventi e iniziative attraverso la nostra newsletter.
                 <br>
                 Supporto: Il nostro team è sempre disponibile per rispondere a qualsiasi domanda tu possa avere. Non esitare a contattarci 
@@ -22,12 +21,12 @@ class EmailMessagge
                 Prossimi Passi:
                 <br>
                 Accesso all' area riservata:<br>
-                Per accedere all' area riservata del nostro sito {sitoreferti}, utilizza la email fornita durante la registrazione e il tuo codice fiscale. 
+                Per accedere all' area riservata del nostro sito {sitoreferti}, utilizza la email da te fornita durante la registrazione e il tuo codice fiscale. 
                 Al primo accesso ti verrà richiesto di cambiare la password per garantire la sicurezza del tuo account.<br>
                 Partecipa agli eventi: <br>
                 Consulta il nostro calendario degli eventi per trovare una sessione di volontariato vicino a te. 
-                La tua prima esperienza è un momento speciale e saremo felici di accoglierti e guidarti attraverso il processo.
-                Coinvolgi i tuoi amici: Invita amici e familiari a unirsi alla nostra causa. Ogni nuovo volontario aumenta il nostro impatto.
+                La tua prima esperienza è un momento speciale e saremo felici di accoglierti e guidarti .
+                Coinvolgi i tuoi amici: Invita amici e familiari a unirsi alla nostra causa. Ogni nuovo volontario può fare la differenza.
                 <br>
                 Risorse Utili: <br>
                 Visita il nostro sito web: {linksitoassociazione}  <br>

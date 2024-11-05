@@ -12,6 +12,16 @@ use CodeIgniter\Config\BaseConfig;
  */
 class Encryption extends BaseConfig
 {
+    
+    public $driver = 'OpenSSL';
+    public $cipher = 'aes-256-cbc';
+    public $key; // Dichiarazione della proprietà senza valore iniziale
+    public $mode = 'cbc';
+    public function __construct()
+    {
+        $hexkey=getenv('encryption.key');
+        $this->key = hex2bin($hexkey);
+    }
     /**
      * --------------------------------------------------------------------------
      * Encryption Key Starter
@@ -21,8 +31,7 @@ class Encryption extends BaseConfig
      * You need to ensure it is long enough for the cipher and mode you plan to use.
      * See the user guide for more info.
      */
-    public string $key = '';
-
+   // public string $key = '';
     /**
      * --------------------------------------------------------------------------
      * Encryption Driver to Use
@@ -34,7 +43,7 @@ class Encryption extends BaseConfig
      * - OpenSSL
      * - Sodium
      */
-    public string $driver = 'OpenSSL';
+    //public string $driver = 'OpenSSL';
 
     /**
      * --------------------------------------------------------------------------
@@ -88,5 +97,5 @@ class Encryption extends BaseConfig
      * Set to 'AES-128-CBC' to decrypt encrypted data that encrypted
      * by CI3 Encryption default configuration.
      */
-    public string $cipher = 'AES-256-CTR';
+   // public string $cipher = 'AES-256-CTR';
 }

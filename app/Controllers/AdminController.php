@@ -13,12 +13,13 @@ use App\Models\UserModel;
 use App\Trait\StringCaseConverter;
 use CodeIgniter\I18n\Time;
 use CodeIgniter\Shield\Entities\User;
+use CodeIgniter\Shield\Models\UserModel as ModelsUserModel;
 use setasign\Fpdi\Fpdi;
 
 class AdminController extends BaseController
 {
     use StringCaseConverter;
-   
+
     private function addHeader(Fpdi $pdf, $company)
     {
         $pdf->SetY(10);
@@ -188,6 +189,7 @@ class AdminController extends BaseController
             $user_to_edit = $users->select('*')
                 ->where('unique_code', $id)
                 ->findAll();
+            //  var_dump($user_to_edit);
         }
         if ($typeSearch == 3) {
             $user_to_edit = $users->select('Tax_code')
@@ -281,9 +283,9 @@ class AdminController extends BaseController
         $companyModel = new ModelCompany();
         $businesHours  = new BusinessHoursModel();
         $company = $companyModel->find($user->id_association);
-        $businesWorkHoursiscomplete= $businesHours->isBusinesHoursComplete($user->id_association);
-        $isCompanyDatailComplete= $companyModel->check_registration_state($user->id_association);
-       // echo $businesWorkHoursiscomplete.'<br>'. $isCompanyDatailComplete . '<br>';
+        $businesWorkHoursiscomplete = $businesHours->isBusinesHoursComplete($user->id_association);
+        $isCompanyDatailComplete = $companyModel->check_registration_state($user->id_association);
+        // echo $businesWorkHoursiscomplete.'<br>'. $isCompanyDatailComplete . '<br>';
         $token = csrf_hash();
         $directory = './assets/avatar/';
         $files = array_diff(scandir($directory), ['.', '..']);
@@ -364,25 +366,25 @@ class AdminController extends BaseController
                 ];
             }
         }
-         $currentDate = Time::now();
+        $currentDate = Time::now();
         $Appointment = new AppointmentModel();
-        $allAppointmentpendig = $Appointment->getPendingAppointmentsWithDetails($user->id_association,$company->agenda_code);
-        $confirmedAppointment=$Appointment->getAppointmentsByDate($user->id_association,$company->agenda_code,$currentDate);
+        $allAppointmentpendig = $Appointment->getPendingAppointmentsWithDetails($user->id_association, $company->agenda_code);
+        $confirmedAppointment = $Appointment->getAppointmentsByDate($user->id_association, $company->agenda_code, $currentDate);
         $data['list'] = [
-            'registration'=> (!$businesWorkHoursiscomplete && !$isCompanyDatailComplete) ? lang('Auth.noregisrationcomplete') :"",
+            'registration' => (!$businesWorkHoursiscomplete && !$isCompanyDatailComplete) ? lang('Auth.noregisrationcomplete') : "",
             'pathavatar' => $files,
             'avatar' => $user->avatar,
             'autorizzato' => $user->authorized,
             'pending' => $list_pending_user,
             'alluser' => $list_all_user,
-            'showappointment'=>(empty($allAppointmentpendig))? lang('Auth.noappointment'):lang('Auth.yesappointment'),
+            'showappointment' => (empty($allAppointmentpendig)) ? lang('Auth.noappointment') : lang('Auth.yesappointment'),
             'appointmentpending' => $allAppointmentpendig,
-            'showconfirmedappointment'=>(empty($confirmedAppointment))? lang('Auth.noappointmentconfirm'):lang('Auth.yesappointmentconfirm'),
-            'todayappointment' =>$confirmedAppointment,
+            'showconfirmedappointment' => (empty($confirmedAppointment)) ? lang('Auth.noappointmentconfirm') : lang('Auth.yesappointmentconfirm'),
+            'todayappointment' => $confirmedAppointment,
             'listfile' => $fileList,
             'showreport' => (empty($fileList)) ? lang('Auth.noreport') : lang('Auth.yesreport'),
         ];
-       
+
         echo view('header');
         return view('Adminview\Admin_dashboard', $data);
     }
@@ -457,21 +459,20 @@ class AdminController extends BaseController
             return $this->response->setJSON($risposta);
         } else {
             $useradmin = auth()->user();
-            $user = auth()->user();
-            $user->id = $postData['id'];
-            $user->authorized = 1;
-            $user->user_type = 'donatore';
             $modeluser = new UserModel();
-            $modeluser->save($user);
-            $risposta = [
-                'msg' => 'ok',
-                'token' => $token,
-                'id' => $postData['id'],
-            ];
-            //  $this->SendEmail($to, $subject,$from,$name,$message);
-            header('Content-Type: application/json');
-
-            return $this->response->setJSON($risposta);
+            $user = $modeluser->find($postData['id']);
+            if ($user) {
+                $user->authorized = 1;
+                $user->user_type = 'donatore';
+                $modeluser->save($user);
+                $risposta = [
+                    'msg' => 'ok',
+                    'token' => $token,
+                    'id' => $postData['id'],
+                ];
+                header('Content-Type: application/json');
+                return $this->response->setJSON($risposta);
+            }
         }
     }
 
@@ -995,6 +996,7 @@ class AdminController extends BaseController
                     'phenotype' => $postData['phenotype'],
                     'kell' => $postData['kell'],
                     'gender' => $postData['gender'],
+                    'salt' => bin2hex(random_bytes(16)),
                 ];
                 $user = new user($newuser);
                 $users = auth()->getProvider();
@@ -1005,7 +1007,7 @@ class AdminController extends BaseController
                 $user->forcePasswordReset();
                 $emailManager = new EmailManager();
                 $emailManager->getMessage('welcome', $user->id_association, $user->id);
-                $risposta=[
+                $risposta = [
                     'msg' => 'success',
                     'token' => $token,
                 ];
@@ -1391,9 +1393,7 @@ class AdminController extends BaseController
         //  if ($this->request->isAJAX() && $this->request->$request->is('post')) {
         $token = csrf_hash();
         $postData = $request->getPost();
-        $id = $postData['id'];
         $useradmin = auth()->user();
-        $user = auth()->user();
         $rules = [
             'id' => 'required|integer',
             'uniquecode' => [
@@ -1433,24 +1433,25 @@ class AdminController extends BaseController
 
             return $this->response->setJSON($risposta);
         } else {
-            $user->id = $postData['id'];
-            $user->unique_code = $postData['uniquecode'];
             $modeluser = new UserModel();
-            $modeluser->save($user);
-            $risposta = [
-                'msg' => 'ok',
-                'token' => $token,
-            ];
-            //  $this->SendEmail($to, $subject,$from,$name,$message);
-            $path = WRITEPATH . '/referti/' . $postData['taxcode'];
-            if (!is_dir($path)) {
-                mkdir($path, 0777, true);
-            }
-            header('Content-Type: application/json');
+            $user = $modeluser->find($postData['id']);
+            if ($user) {
+                // Aggiorna i campi necessari
+                $user->unique_code = $postData['uniquecode'];
+                $modeluser->save($user);
+                $risposta = [
+                    'msg' => 'ok',
+                    'token' => $token,
+                ];
+                $path = WRITEPATH . '/referti/' . hash('sha256', $user->salt . $user->Tax_code) . '/';
+                if (!is_dir($path)) {
+                    mkdir($path, 0777, true);
+                }
+                header('Content-Type: application/json');
 
-            return $this->response->setJSON($risposta);
+                return $this->response->setJSON($risposta);
+            }
         }
-        // }
     }
 
     public function UserDelete()
@@ -1492,7 +1493,7 @@ class AdminController extends BaseController
         if ($doctor) {
             return WRITEPATH . '/referti/dottore/' . $user->id_association . '/';
         } else {
-            return WRITEPATH . '/referti/' . $user->Tax_code . '/';
+            return WRITEPATH . '/referti/' . hash('sha256', $user->salt . $user->Tax_code) . '/';
         }
     }
 
@@ -1727,6 +1728,8 @@ class AdminController extends BaseController
                 }
             }
             // salva i risultati delle analisi
+            $idgiver = $postData['iduserfound'];
+            $giver = $this->getUser($idgiver);
             $examdata = [
                 'donation_result' => $postData['dresult'],
                 'exam_type' => $postData['danationtype'],
@@ -1734,7 +1737,7 @@ class AdminController extends BaseController
                 'day_stop' => $postData['daystop'],
                 'unlockdate' => Time::now()->addDays($postData['daystop']),
                 'stop_notice' => $postData['notestop'],
-                'donation_iduser' => $this->returnuser(0, 4, $postData['taxcodefound']),
+                'donation_iduser' => $idgiver,
                 'notedoctor' => $postData['noteinpdf'],
                 'upload_date' => $time->today(),
                 'file_name' => $filename,
@@ -1747,7 +1750,12 @@ class AdminController extends BaseController
             // Salva il PDF aggiornato
 
             // Invia l'email di conferma memorizza nel db
-            $newFilePath = WRITEPATH . '/referti/' . $postData['taxcodefound'] . '/' . $id . '_' . $filename . '.pdf'; // determiniamo il nome e il percorso del file
+            // return WRITEPATH . '/referti/' . hash('sha256', $giver->salt . $postData['taxcodefound'] ) . '/';
+            $newFilePath = WRITEPATH . '/referti/' . hash('sha256', $giver->salt . $giver->tax_code) . '/' . $id . '_' . $filename . '.pdf'; // determiniamo il nome e il percorso del file
+            $directoryreport = WRITEPATH . '/referti/' . hash('sha256', $giver->salt . $giver->tax_code) . '/';
+            if (!is_dir($directoryreport)) {
+                mkdir($directoryreport, 0777, true);
+            }
             $pdf->Output($newFilePath, 'F');
             // 'Eliminiamo I file
             unlink(FCPATH . $oldFilePath);
@@ -1755,7 +1763,7 @@ class AdminController extends BaseController
             // invia la mail
             $emailManager = new EmailManager();
             $emailManager->getMessage('New_exsam', $user->id_association, $id);
-          
+
             $risposta = [
                 'msg' => 'ok',
                 'token' => $token,
@@ -1958,5 +1966,4 @@ class AdminController extends BaseController
     {
         return view('Adminview/newpasswordview');
     }
-
 }

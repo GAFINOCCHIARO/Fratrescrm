@@ -93,6 +93,7 @@ class AuthGroups extends ShieldAuthGroups
         'admin.infosendmessage' => 'Consenso invio notifiche a donatori',
         'admin.changecompanyprofile' => 'Consenso modifica dati associazione',
         'admin.createappointments' => 'Consenso crazione agenda',
+        'admin.InsertPrivacyPolicy'=>'Gestione privacy policy',
         'user.change_password' => 'Consenti cambio password',
         'user.homeaccess' => 'utenza user',
     ];

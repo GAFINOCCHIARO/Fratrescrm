@@ -1,3 +1,7 @@
+<?php
+use Config\Encryption;
+$encryption = service('encrypter');
+?>
 <!DOCTYPE html>
 <html>
 
@@ -124,6 +128,13 @@
                 <i class="fa fa-user"></i> 
                 <?php echo lang('Auth.newUser'); ?>
             </a>
+
+
+            <a href="#" class="w3-bar-item w3-button w3-padding" onclick="InsertPrivacyPolicy();"><i
+                    class="fa fa-key"></i> 
+                <?php echo lang('Auth.InsertPrivacyPolicy'); ?>
+            </a>
+
 
 
             <a href="<?php echo site_url('/logout'); ?>" class="w3-bar-item w3-button w3-padding"><i
@@ -298,129 +309,129 @@
             </table>
             <!-- end table new user -->
         </div>
-            <div class="w3-responsive  w3-container w3-card-4 w3-margin">
-                <h5><?= lang('Auth.tabellautenti'); ?></h5>
+        <div class="w3-responsive  w3-container w3-card-4 w3-margin">
+            <h5><?= lang('Auth.tabellautenti'); ?></h5>
 
-                <table class="w3-table w3-striped w3-white" id="tabuser">
-                    <thead>
-                        <tr>
-                            <th></th>
-                            <th><?= lang('Auth.Cognome'); ?></th>
-                            <th><?= lang('Auth.Nome'); ?></th>
-                            <th><?= lang('Auth.Citta'); ?></th>
-                            <th><?= lang('Auth.telefono'); ?></th>
-                            <th><?= lang('Auth.Tipoutente'); ?></th>
-                            <th><?= lang('Auth.stato'); ?></th>
-                            <th><?= lang('Auth.Grupposanguigno'); ?></th>
-                            <th><?= lang('Auth.rh'); ?></th>
-                            <th><?= lang('Auth.Fenotipo'); ?></th>
-                            <th><?= lang('Auth.kell'); ?></th>
-                            <th><?= lang('Auth.DonazioneSangue'); ?></th>
-                            <th><?= lang('Auth.DonazionePlasma'); ?></th>
-                            <th><?= lang('Auth.DonazionePiastrine'); ?></th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <?php $con = 0;
-                        foreach ($list['alluser'] as $singleuser): ?>
-                            <?php
-                            // Verifica lo stato dell'utente
-                            $isRed = ($singleuser['sangueisok'] == 'red' || $singleuser['plasmaisok'] == 'red' || $singleuser['piastrineisok'] == 'red');
-                            $rowClass = $isRed ? 'w3-red' : '';
-                            ?>
-                            <tr class="<?= $rowClass; ?>">
-                                <td>
-                                    <div class="w3-dropdown-click">
-                                        <button onclick="openmenu(<?= esc($con); ?>)" class="w3-button w3-hover-white"
-                                            id="<?= esc($con); ?>">
-                                            <i class="fa fa-bars" aria-hidden="true"></i>
-                                        </button>
-                                        <div id="Demo<?= esc($con); ?>" class="w3-dropdown-content w3-bar-block w3-border">
-                                            <a href="#" class="w3-bar-item w3-button"
-                                                onclick="EditUser(<?= esc($singleuser['id']); ?>)"><?= lang('Auth.btneditutente'); ?></a>
-                                            <a href="#" class="w3-bar-item w3-button"
-                                                onclick="EditUserexsam(<?= esc($singleuser['id']); ?>)"><?= lang('Auth.btnEditUtenteExsam'); ?></a>
-                                            <a href="#" class="w3-bar-item w3-button"
-                                                onclick="sendmsg(<?= esc($singleuser['id']); ?>, 'donazione_sangue')">msg
-                                                Invito donazione sangue</a>
-                                            <a href="#" class="w3-bar-item w3-button"
-                                                onclick="sendmsg(<?= esc($singleuser['id']); ?>, 'donazione_piastrine')">msg
-                                                Invito donazione piastrine</a>
-                                            <a href="#" class="w3-bar-item w3-button"
-                                                onclick="sendmsg(<?= esc($singleuser['id']); ?>, 'donazione_plasma')">msg
-                                                Invito donazione plasma</a>
-                                        </div>
+            <table class="w3-table w3-striped w3-white" id="tabuser">
+                <thead>
+                    <tr>
+                        <th></th>
+                        <th><?= lang('Auth.Cognome'); ?></th>
+                        <th><?= lang('Auth.Nome'); ?></th>
+                        <th><?= lang('Auth.Citta'); ?></th>
+                        <th><?= lang('Auth.telefono'); ?></th>
+                        <th><?= lang('Auth.Tipoutente'); ?></th>
+                        <th><?= lang('Auth.stato'); ?></th>
+                        <th><?= lang('Auth.Grupposanguigno'); ?></th>
+                        <th><?= lang('Auth.rh'); ?></th>
+                        <th><?= lang('Auth.Fenotipo'); ?></th>
+                        <th><?= lang('Auth.kell'); ?></th>
+                        <th><?= lang('Auth.DonazioneSangue'); ?></th>
+                        <th><?= lang('Auth.DonazionePlasma'); ?></th>
+                        <th><?= lang('Auth.DonazionePiastrine'); ?></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <?php $con = 0;
+                    foreach ($list['alluser'] as $singleuser): ?>
+                        <?php
+                        // Verifica lo stato dell'utente
+                        $isRed = ($singleuser['sangueisok'] == 'red' || $singleuser['plasmaisok'] == 'red' || $singleuser['piastrineisok'] == 'red');
+                        $rowClass = $isRed ? 'w3-red' : '';
+                        ?>
+                        <tr class="<?= $rowClass; ?>">
+                            <td>
+                                <div class="w3-dropdown-click">
+                                    <button onclick="openmenu(<?= esc($con); ?>)" class="w3-button w3-hover-white"
+                                        id="<?= esc($con); ?>">
+                                        <i class="fa fa-bars" aria-hidden="true"></i>
+                                    </button>
+                                    <div id="Demo<?= esc($con); ?>" class="w3-dropdown-content w3-bar-block w3-border">
+                                        <a href="#" class="w3-bar-item w3-button"
+                                            onclick="EditUser(<?= esc($singleuser['id']); ?>)"><?= lang('Auth.btneditutente'); ?></a>
+                                        <a href="#" class="w3-bar-item w3-button"
+                                            onclick="EditUserexsam(<?= esc($singleuser['id']); ?>)"><?= lang('Auth.btnEditUtenteExsam'); ?></a>
+                                        <a href="#" class="w3-bar-item w3-button"
+                                            onclick="sendmsg(<?= esc($singleuser['id']); ?>, 'donazione_sangue')">msg
+                                            Invito donazione sangue</a>
+                                        <a href="#" class="w3-bar-item w3-button"
+                                            onclick="sendmsg(<?= esc($singleuser['id']); ?>, 'donazione_piastrine')">msg
+                                            Invito donazione piastrine</a>
+                                        <a href="#" class="w3-bar-item w3-button"
+                                            onclick="sendmsg(<?= esc($singleuser['id']); ?>, 'donazione_plasma')">msg
+                                            Invito donazione plasma</a>
                                     </div>
-                                </td>
-                                <td><?= esc($singleuser['surname']); ?></td>
-                                <td><?= esc($singleuser['first_name']); ?></td>
-                                <td><?= esc($singleuser['City_of_residence']); ?></td>
-                                <td><?= esc($singleuser['phone_number']); ?></td>
-                                <td><?= esc($singleuser['user_type']); ?></td>
-                                <td><?= esc($singleuser['stato']); ?></td>
-                                <td><?= esc($singleuser['group_type']); ?></td>
-                                <td><?= esc($singleuser['rh_factor']); ?></td>
-                                <td><?= esc($singleuser['phenotype']); ?></td>
-                                <td><?= esc($singleuser['kell']); ?></td>
-                                <td><?= $isRed ? lang('Auth.utentesospeso') : esc($singleuser['sangueisok']); ?></td>
-                                <td><?= $isRed ? lang('Auth.utentesospeso') : esc($singleuser['plasmaisok']); ?></td>
-                                <td><?= $isRed ? lang('Auth.utentesospeso') : esc($singleuser['piastrineisok']); ?></td>
-                            </tr>
-                            <?php $con++; ?>
-                        <?php endforeach; ?>
-                    </tbody>
-                    <tfoot>
-                        <tr>
-                            <th></th>
-                            <th><?= lang('Auth.Cognome'); ?></th>
-                            <th><?= lang('Auth.Nome'); ?></th>
-                            <th><?= lang('Auth.Citta'); ?></th>
-                            <th><?= lang('Auth.telefono'); ?></th>
-                            <th><?= lang('Auth.Tipoutente'); ?></th>
-                            <th><?= lang('Auth.stato'); ?></th>
-                            <th><?= lang('Auth.Grupposanguigno'); ?></th>
-                            <th><?= lang('Auth.rh'); ?></th>
-                            <th><?= lang('Auth.Fenotipo'); ?></th>
-                            <th><?= lang('Auth.kell'); ?></th>
-                            <th><?= lang('Auth.DonazioneSangue'); ?></th>
-                            <th><?= lang('Auth.DonazionePlasma'); ?></th>
-                            <th><?= lang('Auth.DonazionePiastrine'); ?></th>
+                                </div>
+                            </td>
+                            <td><?= esc($singleuser['surname']); ?></td>
+                            <td><?= esc($singleuser['first_name']); ?></td>
+                            <td><?= esc($singleuser['City_of_residence']); ?></td>
+                            <td><?= esc($singleuser['phone_number']); ?></td>
+                            <td><?= esc($singleuser['user_type']); ?></td>
+                            <td><?= esc($singleuser['stato']); ?></td>
+                            <td><?= esc($singleuser['group_type']); ?></td>
+                            <td><?= esc($singleuser['rh_factor']); ?></td>
+                            <td><?= esc($singleuser['phenotype']); ?></td>
+                            <td><?= esc($singleuser['kell']); ?></td>
+                            <td><?= $isRed ? lang('Auth.utentesospeso') : esc($singleuser['sangueisok']); ?></td>
+                            <td><?= $isRed ? lang('Auth.utentesospeso') : esc($singleuser['plasmaisok']); ?></td>
+                            <td><?= $isRed ? lang('Auth.utentesospeso') : esc($singleuser['piastrineisok']); ?></td>
                         </tr>
-                    </tfoot>
-                </table>
-            </div>
-            <!-- begin window avatar -->
-            <div id="avatarnodale" class="w3-modal">
-                <div class="w3-modal-content w3-card-4">
-                    <header class="w3-container w3-blue">
-                        <span onclick="document.getElementById('avatarnodale').style.display='none'"
-                            class="w3-button w3-display-topright">&times;</span>
-                        <h2> <?php echo lang('Auth.scegli_avatar'); ?></h2>
-                    </header>
-                    <div class="w3-row">
-                        <?php foreach ($list['pathavatar'] as $pathavatar) { ?>
-                            <div class="w3-col m4 l3 s3"
-                                onclick="changeavatar('/assets/avatar/<?php echo $pathavatar; ?>')">
-                                <img class="w3-circle w3-padding" src="/assets/avatar/<?php echo $pathavatar; ?>"
-                                    alt="avatar" style="width:80px">
-                            </div>
-                        <?php } ?>
-                    </div>
-                    <footer class="w3-container w3-blue">
-                        <p><?php echo lang('Auth.associazione'); ?></p>
-                    </footer>
-                </div>
-            </div>
-            <!-- end window avatar-->
-
-
+                        <?php $con++; ?>
+                    <?php endforeach; ?>
+                </tbody>
+                <tfoot>
+                    <tr>
+                        <th></th>
+                        <th><?= lang('Auth.Cognome'); ?></th>
+                        <th><?= lang('Auth.Nome'); ?></th>
+                        <th><?= lang('Auth.Citta'); ?></th>
+                        <th><?= lang('Auth.telefono'); ?></th>
+                        <th><?= lang('Auth.Tipoutente'); ?></th>
+                        <th><?= lang('Auth.stato'); ?></th>
+                        <th><?= lang('Auth.Grupposanguigno'); ?></th>
+                        <th><?= lang('Auth.rh'); ?></th>
+                        <th><?= lang('Auth.Fenotipo'); ?></th>
+                        <th><?= lang('Auth.kell'); ?></th>
+                        <th><?= lang('Auth.DonazioneSangue'); ?></th>
+                        <th><?= lang('Auth.DonazionePlasma'); ?></th>
+                        <th><?= lang('Auth.DonazionePiastrine'); ?></th>
+                    </tr>
+                </tfoot>
+            </table>
         </div>
-        <!-- Footer -->
-        <footer class="w3-container w3-padding-16 w3-light-grey">
-            <h4><?php echo lang('Auth.associazione'); ?></h4>
-        </footer>
+        <!-- begin window avatar -->
+        <div id="avatarnodale" class="w3-modal">
+            <div class="w3-modal-content w3-card-4">
+                <header class="w3-container w3-blue">
+                    <span onclick="document.getElementById('avatarnodale').style.display='none'"
+                        class="w3-button w3-display-topright">&times;</span>
+                    <h2> <?php echo lang('Auth.scegli_avatar'); ?></h2>
+                </header>
+                <div class="w3-row">
+                    <?php foreach ($list['pathavatar'] as $pathavatar) { ?>
+                        <div class="w3-col m4 l3 s3"
+                            onclick="changeavatar('/assets/avatar/<?php echo $pathavatar; ?>')">
+                            <img class="w3-circle w3-padding" src="/assets/avatar/<?php echo $pathavatar; ?>"
+                                alt="avatar" style="width:80px">
+                        </div>
+                    <?php } ?>
+                </div>
+                <footer class="w3-container w3-blue">
+                    <p><?php echo lang('Auth.associazione'); ?></p>
+                </footer>
+            </div>
+        </div>
+        <!-- end window avatar-->
 
-        <!-- End page content -->
+
+    </div>
+    <!-- Footer -->
+    <footer class="w3-container w3-padding-16 w3-light-grey">
+        <h4><?php echo lang('Auth.associazione'); ?></h4>
+    </footer>
+
+    <!-- End page content -->
     </div>
     <!-- begin loading gif-->
     <div id="loading" class="w3-modal w3-white w3-opacity" style="display:none">
@@ -706,6 +717,25 @@
             }
         });
 
+
+    }
+
+    function InsertPrivacyPolicy() {
+        $('#loading').show();
+        var csrfName = 'csrf_token'; // CSRF Token name
+        var csrfHash = $('input[name="csrf_token"]').val(); // CSRF hash 
+        $.ajax({
+            type: "post",
+            url: "<?php echo site_url('InsertPrivacyPolicy'); ?>",
+            data: {
+                [csrfName]: csrfHash,
+            },
+            dataType: "html",
+            success: function(data) {
+                $('#loading').hide();
+                $('#main').html(data)
+            }
+        });
 
     }
 

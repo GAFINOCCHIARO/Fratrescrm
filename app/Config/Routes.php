@@ -5,7 +5,7 @@ use CodeIgniter\Router\RouteCollection;
 /*
  * @var RouteCollection $routes
  */
-
+$routes->get('prova','prova::index');
 $routes->setDefaultNamespace('App\Controllers');
 $routes->get('/', 'Home::index');
 $routes->get('Nuova_azienda', 'CompanyController::NewCompanyviews');
@@ -42,13 +42,13 @@ $routes->group('', ['filter' => 'login'], static function ($routes) {
     $routes->post('SaveLevelandGroup', 'AdminController::SaveLevelandGroup', ['filter' => 'login:admin.level_up']);
     $routes->post('editcompany', 'CompanyController::editCompanyprofile', ['filter' => 'login:admin.changecompanyprofile']);
     $routes->post('UpdateCompanydata', 'CompanyController::UpdateCompanydata', ['filter' => 'login:admin.changecompanyprofile']);
+    $routes->post('InsertPrivacyPolicy', 'CompanyController::InsertPrivacyPolicy',['filter'=> 'login:admin.InsertPrivacyPolicy']);
     $routes->post('ManageCalendar', 'appointments::ManageCalendar', ['filter' => 'login:admin.createappointments']);
     $routes->post('insertRepetitiveDays', 'appointments::insertRepetitiveDays', ['filter' => 'login:admin.createappointments']);
     $routes->post('addevent', 'Appointments::addevent', ['filter=>login:admin.createappointments']);
     $routes->post('delevent', 'Appointments::delevent', ['filter=>login:admin.createappointments']);
     $routes->post('appointmentdettail','Appointments::appointmentdettail',['filter'=>'login:admin.createappointments']);
     $routes->post('appointmentconfirm','Appointments::appointmentconfirm',['filter'=>'login:admin.createappointments']);
-    $routes->get('prova','prova::index');
     // user
     $routes->get('Homeuser', 'UserController::index', ['filter=>login:user.homeaccess']);
     $routes->post('UpdateAvatarImage', 'UserController::updateAvatarimage', ['filter=>login:user.homeaccess']);

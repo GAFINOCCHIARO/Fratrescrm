@@ -1,5 +1,15 @@
 <!DOCTYPE html>
 <html lang="en">
+<style>
+    #suggestions {
+        width: 50%;
+        /* Imposta la larghezza per adattarsi al campo di input */
+        max-height: 200px;
+        /* Imposta un'altezza massima per la lista */
+        overflow-y: auto;
+        /* Aggiungi uno scroll verticale se i suggerimenti sono molti */
+    }
+</style>
 
 <head>
     <meta charset="UTF-8">
@@ -135,17 +145,21 @@
                     </div> <!-- end Username  e name form input-->
 
                     <div class="w3-row-padding w3-container" id="daticliente"><!-- Begin row ' birth_place County_of_birth zip_codebirth  date_of_birth birth_status document type tax number '   ,form input  -->
-                        <div class="w3-quarter"><!-- birth_place  citta di nascita-->
+                        <div class="w3-fifth"><!-- birth_place  citta di nascita-->
                             <label for="birth_place"><?php echo lang('Auth.birth_place'); ?></label>
                             <input type="text" class="w3-input w3-border w3-round-xlarge" id="birth_place"
                                 name="birth_place" inputmode="birth_place" autocomplete="birth_place"
                                 placeholder="<?php echo lang('Auth.birth_place'); ?>"
                                 value="<?php echo old('birth_place'); ?>" />
+                            <div id="suggestionsbp" class="w3-dropdown-content w3-bar-block w3-border"
+                                style="display: none; position: absolute; z-index: 1;">
+                                <button type="button" onclick="closeSuggestions()" class="w3-button w3-red w3-right">Chiudi</button>
+                            </div>
                             <?php if (isset(session('errors')['birth_place'])) {
                                 echo '<p class="w3-text-red">' . session('errors')['birth_place'] . '</p>';
                             } ?>
                         </div>
-                        <div class="w3-quarter"> <!-- County_of_birth  paese di nascita-->
+                        <div class="w3-fifth"> <!-- County_of_birth  paese di nascita-->
                             <label for="County_of_birth"><?php echo lang('Auth.County_of_birth'); ?></label>
                             <input type="text" class="w3-input w3-border w3-round-xlarge" id="County_of_birth"
                                 name="County_of_birth" inputmode="County_of_birth" autocomplete="County_of_birth"
@@ -155,7 +169,7 @@
                                 echo '<p class="w3-text-red">' . session('errors')['County_of_birth'] . '</p>';
                             } ?>
                         </div>
-                        <div class="w3-quarter"> <!-- zip code birth-->
+                        <div class="w3-fifth"> <!-- zip code birth-->
                             <label for="zip_codebirth"><?php echo lang('Auth.zip_codebirth'); ?></label>
                             <input type="text" class="w3-input w3-border w3-round-xlarge" id="zip_codebirth"
                                 name="zip_codebirth" inputmode="text" autocomplete="zip_codebirth"
@@ -165,7 +179,7 @@
                                 echo '<p class="w3-text-red">' . session('errors')['zip_codebirth'] . '</p>';
                             } ?>
                         </div>
-                        <div class="w3-quarter"><!-- birth_status nazione di nascita-->
+                        <div class="w3-fifth"><!-- birth_status nazione di nascita-->
                             <label for="birth_status"><?php echo lang('Auth.birth_status'); ?></label>
                             <input type="text" class="w3-input w3-border w3-round-xlarge" id="birth_status"
                                 name="birth_status" inputmode="birth_status" autocomplete="birth_status"
@@ -175,8 +189,22 @@
                                 echo '<p class="w3-text-red">' . session('errors')['birth_status'] . '</p>';
                             } ?>
                         </div>
+                        <div class="w3-fifth"><!--gender -->
+                            <label for="gender"><?php echo lang('Auth.gender'); ?></label>
+                            <select name="gender" id="gender" class="w3-select w3-border w3-round-xlarge">
+                                <option value="0" selected><?php echo lang('Auth.select'); ?></option>
+                                <option value="M" <?php if (old('gender') === 'M') {
+                                                        echo 'selected';
+                                                    } ?>>M</option>
+                                <option value="F" <?php if (old('gender') === 'F') {
+                                                        echo 'selected';
+                                                    } ?>>F</option>
+                            </select>
+                            <?php if (isset(session('errors')['gender'])) {
+                                echo '<p class="w3-text-red">' . session('errors')['gender'] . '</p>';
+                            } ?>
+                        </div>
                     </div> <!-- end   row ' birth_place County_of_birth zip_codebirth  date_of_birth birth_status document type tax number '   ,form input  -->
-
                     <div class="w3-row-padding w3-container" "> <!-- Begin row date_of_birth  document type select document number   tax number '   form input  -->
                       <div class=" w3-quarter"> <!-- date_of_birth -->
                         <label for="date_of_birth"><?php echo lang('Auth.date_of_birth'); ?></label>
@@ -193,7 +221,7 @@
                         <label for="document_type"><?php echo lang('Auth.document_type'); ?></label>
                         <select name="document_type" id="document_type"
                             class="w3-select w3-border w3-round-xlarge">
-                            <option value="0">Scegli----</option>
+                            <option value="0"><?php echo lang('Auth.select'); ?> </option>
                             <option value="Carta identità"
                                 <?php if (old('document_type') === 'Carta identità') {
                                     echo 'selected';
@@ -234,17 +262,19 @@
     </div> <!-- end   row date_of_birth  document type select document number   tax number '   form input  -->
 
     <div class="w3-row-padding w3-container"> <!--  begin row form input 'address''City_of_residence','Province_of_residence','zip_code' -->
-        <div class="w3-fifth w3-dropdown-hover "> <!-- City_of_residence-->
+        <div class="w3-fifth"> <!-- City_of_residence-->
             <label for="city_of_residence"><?php echo lang('Auth.City_of_residence'); ?></label>
-            <input type="text" class="w3-input w3-border w3-round-xlarge" id="city_of_residence"
+            <input list="city_of_residence" class="w3-input w3-border w3-round-xlarge" id="city_of_residence"
                 name="city_of_residence" inputmode="text" autocomplete="city_of_residence"
                 placeholder="<?php echo lang('Auth.City_of_residence'); ?>"
                 value="<?php echo old('city_of_residence'); ?>" />
+            <div id="suggestions" class="w3-dropdown-content w3-bar-block w3-border"
+                style="display: none; position: absolute;">
+                <button type="button" onclick="" class="w3-button w3-red w3-right">Chiudi</button>
+            </div>
             <?php if (isset(session('errors')['city_of_residence'])) {
                 echo '<p class="w3-text-red">' . session('errors')['city_of_residence'] . '</p>';
             } ?>
-            <div class="w3-dropdown-content w3-bar-block w3-border">
-            </div>
         </div>
         <div class="w3-fifth"><!-- Province_of_residence-->
             <label for="Province_of_residence"><?php echo lang('Auth.Province_of_residence'); ?></label>
@@ -285,6 +315,7 @@
             } ?>
         </div>
     </div> <!--  end   row form input 'address''City_of_residence','Province_of_residence','zip_code' -->
+
     <div class="w3-row-padding w3-container"> <!-- Begin row 'phone_number', email,form input  -->
         <div class="w3-half w3-container"> <!-- email -->
             <label for="floatingEmailInput"><?php echo lang('Auth.email'); ?></label>
@@ -346,8 +377,8 @@
         $('#city_of_residence').keyup(function() {
             var value = $('#city_of_residence').val();
             if (value.length > 2) {
-                // var csrfName = 'csrf_test_name'; // CSRF Token name
-                //var csrfHash = $('input[name="csrf_test_name"]').val(); // CSRF hash
+                var csrfName = 'csrf_test_name'; // CSRF Token name
+                var csrfHash = $('input[name="csrf_test_name"]').val(); // CSRF hash
                 //console.log(csrfHash);
                 // Fetch data
                 $.ajax({
@@ -355,19 +386,80 @@
                     type: 'post',
                     dataType: "json",
                     data: {
-                        // [csrfName]: csrfHash, // CSRF Token
+                        [csrfName]: csrfHash,
                         search: value,
                         type: '1'
                     },
                     success: function(data) {
-                        // console.log(data.token);
-                        //$('input[name="csrf_test_name"]').val(data.token);
-                        console.log(data);
+                        $('input[name="csrf_test_name"]').val(data.token);
+                        $('#suggestions').empty().show();
+                        data.result.forEach(item => {
+                            $('#suggestions').append(`<div class="w3-bar-item w3-button suggestion-item" 
+                            data-comune="${item.nome_comune}"
+                            data-cap="${item.cap}"
+                            data-citta="${item.citta}"
+                            data-regione="${item.regione}"
+                            data-nazione="${item.nazione}">${item.value}</div>`);
+                        });
                     }
                 });
 
+            } else {
+                $('#suggestions').hide();
             }
         });
+        $(document).on('click', '.suggestion-item', function() {
+            $('#city_of_residence').val($(this).data('comune'));
+            $('#zip_code').val($(this).data('cap'));
+            $('#Province_of_residence').val($(this).data('citta'));
+            $('#state_of_residence').val($(this).data('regione'));
+            $('#address').val($(this).data('nazione'));
+            $('#suggestions').hide();
+        });
+        $('#birth_place').keyup(function() {
+            var value = $('#birth_place').val();
+            if (value.length > 2) {
+                var csrfName = 'csrf_test_name'; // CSRF Token name
+                var csrfHash = $('input[name="csrf_test_name"]').val(); // CSRF hash
+                //console.log(csrfHash);
+                // Fetch data
+                $.ajax({
+                    url: "<?= site_url('Comuni/getComuni') ?>",
+                    type: 'post',
+                    dataType: "json",
+                    data: {
+                        [csrfName]: csrfHash,
+                        search: value,
+                        type: '1'
+                    },
+                    success: function(data) {
+                        $('input[name="csrf_test_name"]').val(data.token);
+                        $('#suggestionsbp').empty().show();
+                        data.result.forEach(item => {
+                            $('#suggestionsbp').append(`<div class="w3-bar-item w3-button suggestionbp-item" 
+                            data-comune="${item.nome_comune}"
+                            data-cap="${item.cap}"
+                            data-citta="${item.citta}"
+                            data-regione="${item.regione}"
+                            data-nazione="${item.nazione}">${item.value}</div>`);
+                        });
+                    }
+                });
 
+            } else {
+                $('#suggestionsbp').hide();
+            }
+        });
+        $(document).on('click', '.suggestionbp-item', function() {
+            // Aggiorna i campi di input con i dati selezionati
+            $('#birth_place').val($(this).data('comune'));;
+            $('#zip_codebirth').val($(this).data('cap'));
+            $('#County_of_birth').val($(this).data('citta'));;
+            $('#birth_status').val($(this).data('regione'));;
+            $('#suggestionsbp').hide();
+            // Aggiungi un campo input per 'nazione' se necessario, o gestiscilo come preferisci
+        });
     });
+
+   
 </script>
