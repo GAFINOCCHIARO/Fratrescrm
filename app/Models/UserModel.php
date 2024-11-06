@@ -1,15 +1,14 @@
 <?php
 
 declare(strict_types=1);
-
 namespace App\Models;
 
 use CodeIgniter\Shield\Models\UserModel as ShieldUserModel;
-use Config\Encryption;
+
+
 class UserModel extends ShieldUserModel
 {
-   
-    // protected $returnType = 'App\Entities\UserEntity'; // Uso la mia entità personalizzata
+   // protected $returnType = 'App\Entities\UserEntity'; // Uso la mia entità personalizzata
     protected function initialize(): void
     {
         parent::initialize();
