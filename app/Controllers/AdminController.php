@@ -161,6 +161,7 @@ class AdminController extends BaseController
             ->where('id_association', $adminuser->id_association)
             ->first();
         return $user;
+     
     }
 
     protected function getValidationRules(): array
@@ -1442,8 +1443,10 @@ class AdminController extends BaseController
                 $risposta = [
                     'msg' => 'ok',
                     'token' => $token,
+                    'salt'=> $user->salt,
+                    'tax'=> $user->Tax_code,
                 ];
-                $path = WRITEPATH . '/referti/' . hash('sha256', $user->salt . $user->Tax_code) . '/';
+                $path = WRITEPATH . '/referti/'.hash('sha256', $user->salt.$user->Tax_code) .'/';
                 if (!is_dir($path)) {
                     mkdir($path, 0777, true);
                 }
@@ -1730,6 +1733,7 @@ class AdminController extends BaseController
             // salva i risultati delle analisi
             $idgiver = $postData['iduserfound'];
             $giver = $this->getUser($idgiver);
+            print_r($giver);
             $examdata = [
                 'donation_result' => $postData['dresult'],
                 'exam_type' => $postData['danationtype'],
@@ -1747,12 +1751,13 @@ class AdminController extends BaseController
             $modelexam = new exammodel();
             $modelexam->save($examEntity);
             $id = $modelexam->getInsertID();
+            
             // Salva il PDF aggiornato
 
             // Invia l'email di conferma memorizza nel db
             // return WRITEPATH . '/referti/' . hash('sha256', $giver->salt . $postData['taxcodefound'] ) . '/';
             $newFilePath = WRITEPATH . '/referti/' . hash('sha256', $giver->salt . $giver->tax_code) . '/' . $id . '_' . $filename . '.pdf'; // determiniamo il nome e il percorso del file
-            $directoryreport = WRITEPATH . '/referti/' . hash('sha256', $giver->salt . $giver->tax_code) . '/';
+            $directoryreport = WRITEPATH . '/referti/' . hash('sha256', $giver->salt.$giver->tax_code) . '/';
             if (!is_dir($directoryreport)) {
                 mkdir($directoryreport, 0777, true);
             }
@@ -1762,7 +1767,7 @@ class AdminController extends BaseController
             unlink($tempdirectory);
             // invia la mail
             $emailManager = new EmailManager();
-            $emailManager->getMessage('New_exsam', $user->id_association, $id);
+            $emailManager->getMessage('New_exsam', $giver->id_association, $idgiver);
 
             $risposta = [
                 'msg' => 'ok',
