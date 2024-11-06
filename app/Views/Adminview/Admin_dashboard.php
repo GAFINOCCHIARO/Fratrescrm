@@ -563,7 +563,6 @@ $encryption = service('encrypter');
                 [csrfName]: csrfHash, // CSRF Token
             },
             success: function(data) {
-                console.log(data.token);
                 // Update CSRF Token
                 $('input[name="csrf_token"]').val(data.token);
                 document.getElementById('avatarnodale').style.display = 'none';
@@ -787,7 +786,7 @@ $encryption = service('encrypter');
             var csrfHash = $('input[name="csrf_token"]').val(); // CSRF hash 
             var files = $('#files')[0].files;
             var fd = new FormData();
-            //console.log(files);
+            
             if (files.length > 0) {
                 for (var x = 0; x < files.length; x++) {
                     fd.append('files[]', files[x]);
@@ -806,7 +805,7 @@ $encryption = service('encrypter');
                     processData: false,
                     dataType: 'json',
                     success: function(data) {
-                        // console.log(data);
+                       
                         $('input[name="csrf_token"]').val(data.token);
                         if (data.msg === true && Array.isArray(data.listerror)) {
                             var errorstring = '';
@@ -881,7 +880,7 @@ $encryption = service('encrypter');
                     $('#loading').hide();
                     $('#formbooknodal').show();
                     if (response.msg === 'ok') {
-                        console.log(response.appointmentdettail[0].appointmentdate);
+    
                         newdate = response.appointmentdettail[0].appointmentdate.split("-").reverse().join("-");
                         $('#dayinput').val(newdate);
                         $("#timeslot").append('<option value=' + response.appointmentdettail[0].appointmentHour + '>' + response.appointmentdettail[0].appointmentHour + '</option>');
@@ -950,7 +949,7 @@ $encryption = service('encrypter');
                 [csrfName]: csrfHash, // CSRF Token
             },
             success: function(response) {
-                console.log(response);
+             
                 $('input[name="csrf_token"]').val(response.token);
                 // Dati per la select 'timeslot'
                 var timeexsamval = response; // Array di fasce orarie
@@ -982,12 +981,12 @@ $encryption = service('encrypter');
         var day = $('#dayinput').val();
 
         const dayweek = new Date(day);
-        console.log(dayweek);
+       
 
-        const dayname = dayweek.getDay(); // Gets the day of the week (0-6)
+        const dayname = dayweek.getDay(); // giorni della settimana
         const dayNames = ["Domenica", "Lunedì", "Martedì", "Mercoledì", "Giovedì", "Venerdì", "Sabato"];
 
-        //console.log(dayNames[dayname]); //       
+         
 
         var type = $('#exsamselector').val();
         var csrfName = 'csrf_token'; // CSRF Token name

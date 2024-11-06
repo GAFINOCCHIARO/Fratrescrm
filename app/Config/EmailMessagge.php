@@ -87,7 +87,7 @@ class EmailMessagge
         ],
         'New_exsam' => [
             'subject' => 'Nuovo Referto Disponibile',
-            'body' => 'Caro/a {nome} {cognome},<br><br>
+            'body' => 'Caro/a {nome} {Cognome},<br><br>
                 Siamo lieti di informarti che un nuovo referto è stato pubblicato nella tua area riservata!<br><br>
                 Ti invitiamo ad accedere alla tua area riservata del nostro sito {sitoreferti} per visualizzare il referto e ottenere ulteriori dettagli.<br><br>
                 Grazie per la tua fiducia e collaborazione,<br><br>

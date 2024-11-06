@@ -146,12 +146,7 @@ class AdminController extends BaseController
         $user->id = $id;
         // Usa lo spread operator per passare i permessi come parametri individuali
         $user->syncGroups($newgroup);
-        /*
-        if ($newgroup == 'user') {
-            $user->syncPermissions();
-        } else {*/
         $user->syncPermissions(...$NewUserPermision);
-        // }
     }
     private function getUser($id): User
     {
@@ -190,7 +185,7 @@ class AdminController extends BaseController
             $user_to_edit = $users->select('*')
                 ->where('unique_code', $id)
                 ->findAll();
-            //  var_dump($user_to_edit);
+           
         }
         if ($typeSearch == 3) {
             $user_to_edit = $users->select('Tax_code')
@@ -1331,11 +1326,10 @@ class AdminController extends BaseController
             ];
 
             if (!$this->validate($rules, $error)) {
-                //  var_dump($error);
+                
 
                 $data = $this->validator->getErrors();
-                // var_dump($data);
-
+                
                 foreach ($data as $error) {
                     $er[] = $error;
                 }
@@ -1391,7 +1385,6 @@ class AdminController extends BaseController
     {
         $request = service('request');
         helper(['form', 'url']);
-        //  if ($this->request->isAJAX() && $this->request->$request->is('post')) {
         $token = csrf_hash();
         $postData = $request->getPost();
         $useradmin = auth()->user();
@@ -1435,8 +1428,14 @@ class AdminController extends BaseController
             return $this->response->setJSON($risposta);
         } else {
             $modeluser = new UserModel();
-            $user = $modeluser->find($postData['id']);
+            $user = $modeluser->where('id',$postData['id'])
+                              ->where('id_association', $useradmin->id_association)
+                               ->first();
             if ($user) {
+                $path = WRITEPATH . '/referti/' . hash('sha256', $user->salt.$user->id) . '/';
+                if (!is_dir($path)) {
+                    mkdir($path, 0777, true);
+                }
                 // Aggiorna i campi necessari
                 $user->unique_code = $postData['uniquecode'];
                 $modeluser->save($user);
@@ -1446,10 +1445,7 @@ class AdminController extends BaseController
                     'salt'=> $user->salt,
                     'tax'=> $user->Tax_code,
                 ];
-                $path = WRITEPATH . '/referti/'.hash('sha256', $user->salt.$user->Tax_code) .'/';
-                if (!is_dir($path)) {
-                    mkdir($path, 0777, true);
-                }
+               
                 header('Content-Type: application/json');
 
                 return $this->response->setJSON($risposta);
@@ -1496,7 +1492,7 @@ class AdminController extends BaseController
         if ($doctor) {
             return WRITEPATH . '/referti/dottore/' . $user->id_association . '/';
         } else {
-            return WRITEPATH . '/referti/' . hash('sha256', $user->salt . $user->Tax_code) . '/';
+            return WRITEPATH . '/referti/' . hash('sha256', $user->salt . $user->id) . '/';
         }
     }
 
@@ -1733,7 +1729,6 @@ class AdminController extends BaseController
             // salva i risultati delle analisi
             $idgiver = $postData['iduserfound'];
             $giver = $this->getUser($idgiver);
-            print_r($giver);
             $examdata = [
                 'donation_result' => $postData['dresult'],
                 'exam_type' => $postData['danationtype'],
@@ -1755,9 +1750,9 @@ class AdminController extends BaseController
             // Salva il PDF aggiornato
 
             // Invia l'email di conferma memorizza nel db
-            // return WRITEPATH . '/referti/' . hash('sha256', $giver->salt . $postData['taxcodefound'] ) . '/';
-            $newFilePath = WRITEPATH . '/referti/' . hash('sha256', $giver->salt . $giver->tax_code) . '/' . $id . '_' . $filename . '.pdf'; // determiniamo il nome e il percorso del file
-            $directoryreport = WRITEPATH . '/referti/' . hash('sha256', $giver->salt.$giver->tax_code) . '/';
+           
+            $newFilePath = WRITEPATH . '/referti/' . hash('sha256', $giver->salt . $giver->id) . '/' . $id . '_' . $filename . '.pdf'; // determiniamo il nome e il percorso del file
+            $directoryreport = WRITEPATH . '/referti/' . hash('sha256', $giver->salt.$giver->id) . '/';
             if (!is_dir($directoryreport)) {
                 mkdir($directoryreport, 0777, true);
             }
@@ -1765,13 +1760,14 @@ class AdminController extends BaseController
             // 'Eliminiamo I file
             unlink(FCPATH . $oldFilePath);
             unlink($tempdirectory);
-            // invia la mail
-            $emailManager = new EmailManager();
-            $emailManager->getMessage('New_exsam', $giver->id_association, $idgiver);
+         //invia la mail
+          $emailManager = new EmailManager();
+          $emailManager->getMessage('New_exsam', $giver->id_association, $idgiver);
 
             $risposta = [
                 'msg' => 'ok',
                 'token' => $token,
+
             ];
             header('Content-Type: application/json');
 
@@ -1844,27 +1840,6 @@ class AdminController extends BaseController
             $user = auth()->user();
             $users = auth()->getProvider();
             $user = $users->findById($id);
-
-            /*
-            $Exsamrow = new exammodel();
-            $rowexsam = $Exsamrow->find($id);
-            $namefile = $id . '_' . $rowexsam->file_name;
-            $path = $this->GetWritepath(false) . $namefile . '.pdf';
-            if (file_exists($path)) {
-                unlink($path);
-                $Exsamrow->delete($id);
-                $type = 'ok';
-            } else {
-                $Exsamrow->delete($id);
-                $type = 'ko';
-            }
-            $data = [
-                'token' => $token,
-                'file' => $type,
-                'path' => $path,
-            ];
-            header('Content-Type: application/json');
-            return $this->response->setJSON($data);*/
         }
         $emailManager = new EmailManager();
         $emailManager->getMessage($type, $user->id_association, $id);

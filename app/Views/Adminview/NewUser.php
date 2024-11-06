@@ -279,9 +279,7 @@
                     // Gestisci la risposta dal server
                     if (data.msg == 'fail') {
                         clearscreen();
-                        console.log(data.aer);
-                        for (const key in data.aer) {
-                            console.log(data);
+                        for (const key in data.aer) {               
                             $("#error" + key).html(data.aer[key]);
                             $("#" + key).addClass("w3-border-red");
                             // Accedi al valore della proprietà
@@ -299,87 +297,6 @@
             });
 
         });
-        /*
-        $("#City_of_residence").autocomplete({
-            source: function(request, response) {
-                // CSRF Hash
-                var csrfName = 'csrf_token'; // CSRF Token name
-                var csrfHash = $('input[name="csrf_token"]').val(); // CSRF hash
-                //  console.log(csrfHash);
-                // Fetch data
-                $.ajax({
-                    url: "<?php echo site_url('Comuni/getComuni'); ?>",
-                    type: 'post',
-                    dataType: "json",
-                    data: {
-                        search: request.term,
-                        [csrfName]: csrfHash, // CSRF Token
-                        type: '1'
-                    },
-                    success: function(data) {
-                        console.log(data.token);
-                        // Update CSRF Token
-                        $('input[name="csrf_token"]').val(data.token);
-
-                        response(data.data);
-                    }
-                });
-            },
-            select: function(event, ui) {
-                // Set selection
-                // display the selected text 
-                $("#City_of_residence").val(ui.item.nome_comune);
-                $("#Province_of_residence").val(ui.item.citta);
-                $("#zip_code").val(ui.item.cap);
-                $("#state_of_residence").val(ui.item.nazione);
-                return false;
-            },
-            focus: function(event, ui) {
-                $("#City_of_residence").val(ui.item.nome_comune);
-                return false;
-            },
-        });
-        $("#birth_place").autocomplete({
-            source: function(request, response) {
-                // CSRF Hash
-                var csrfName = 'csrf_token'; // CSRF Token name
-                var csrfHash = $('input[name="csrf_token"]').val(); // CSRF hash
-                // console.log(csrfHash);
-                // Fetch data
-                $.ajax({
-                    url: "<?php echo site_url('Comuni/getComuni'); ?>",
-                    type: 'post',
-                    dataType: "json",
-                    data: {
-                        search: request.term,
-                        [csrfName]: csrfHash, // CSRF Token
-                        type: '1'
-                    },
-                    success: function(data) {
-                        console.log(data.token);
-                        // Update CSRF Token
-                        $('input[name="csrf_token"]').val(data.token);
-
-                        response(data.data);
-                    }
-                });
-            },
-            select: function(event, ui) {
-                // Set selection // display the selected text
-                $('#birth_place').val(ui.item.nome_comune);
-                $("#County_of_birth").val(ui.item.citta);
-                $("#zip_codebirth").val(ui.item.cap);
-                $("#birth_status").val(ui.item.nazione);
-                return false;
-            },
-            focus: function(event, ui) {
-                $("#birth_place").val(ui.item.value);
-
-                //$( "#userid" ).val( ui.item.value );
-                return false;
-            },
-        });
-        */
     });
 
     function clearscreen() {

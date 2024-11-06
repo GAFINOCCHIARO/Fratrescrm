@@ -557,9 +557,9 @@
                     // Gestisci la risposta dal server
                     if (data.msg == 'fail') {
                         clearscreen();
-                        console.log(data.aer);
+                       
                         for (const key in data.aer) {
-                            console.log(data);
+                           
                             $("#error" + key).html(data.aer[key]);
                             $("#" + key).addClass("w3-border-red");
                             // Accedi al valore della proprietà
@@ -578,7 +578,7 @@
             e.preventDefault();
             $('#loading').show();
             var examId = $(this).attr("data-exsamid");
-            console.log(examId);
+           
             $.ajax({
                 type: "post",
                 url: "<?php echo site_url('DelExsam'); ?>",
@@ -636,7 +636,7 @@
     }
 
     function clearscreen() {
-        console.log("clerscreen");
+      
         $("#errorfirst_name").html("  ");
         $("#errorsurname").html("  ");
         $("#errorbirth_place").html("  ");

@@ -261,7 +261,6 @@
                 success: function(data) {
                     $('#loading').hide();
                     $('#searchresult').show();
-                    console.log(data);
                     if (!data.useredit.user.isuserfind) {
                         $('#name_result').html(data.useredit.user.erromsg);
                     } else {

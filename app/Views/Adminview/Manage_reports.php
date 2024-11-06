@@ -49,7 +49,6 @@
 </html>
 <script>
     function showfile(file) {
-       // $('#loading').show();
         var csrfName = 'csrf_token'; // CSRF Token name
         var csrfHash = $('input[name="csrf_token"]').val(); // CSRF hash 
         $.ajax({
@@ -61,8 +60,7 @@
             },
             dataType: "html",
             success: function(data) {
-                console.log (data);
-           //     $('#loading').hide();
+        
                 $('#main').html(data)
             }
         });
