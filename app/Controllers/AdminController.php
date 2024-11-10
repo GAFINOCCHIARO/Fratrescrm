@@ -15,10 +15,30 @@ use CodeIgniter\I18n\Time;
 use CodeIgniter\Shield\Entities\User;
 use CodeIgniter\Shield\Models\UserModel as ModelsUserModel;
 use setasign\Fpdi\Fpdi;
+use Exception;
 
 class AdminController extends BaseController
 {
     use StringCaseConverter;
+    private function decryptFileContent($filePath, $encryptionKey)
+    {
+        $encryptedContent = file_get_contents($filePath);
+        if ($encryptedContent === false) {
+            throw new \Exception("Impossibile leggere il file: $filePath");
+        }
+
+        $cipher = 'aes-256-cbc';
+        $ivlen = openssl_cipher_iv_length($cipher);
+        $iv = substr($encryptedContent, 0, $ivlen);
+        $encryptedData = substr($encryptedContent, $ivlen);
+
+        $decryptedContent = openssl_decrypt($encryptedData, $cipher, $encryptionKey, 0, $iv);
+        if ($decryptedContent === false) {
+            throw new \Exception("Decifratura fallita.");
+        }
+
+        return $decryptedContent;
+    }
 
     private function addHeader(Fpdi $pdf, $company)
     {
@@ -156,7 +176,6 @@ class AdminController extends BaseController
             ->where('id_association', $adminuser->id_association)
             ->first();
         return $user;
-     
     }
 
     protected function getValidationRules(): array
@@ -185,7 +204,6 @@ class AdminController extends BaseController
             $user_to_edit = $users->select('*')
                 ->where('unique_code', $id)
                 ->findAll();
-           
         }
         if ($typeSearch == 3) {
             $user_to_edit = $users->select('Tax_code')
@@ -999,7 +1017,7 @@ class AdminController extends BaseController
                 $users->save($user);
                 $user = $users->findById($users->getInsertID());
                 $user->addGroup('user');
-                $user->addPermission('user.change_password', 'user.homeaccess');
+                $user->addPermission('user.change_password', 'user.homeaccess', 'admin.downladreport');
                 $user->forcePasswordReset();
                 $emailManager = new EmailManager();
                 $emailManager->getMessage('welcome', $user->id_association, $user->id);
@@ -1326,10 +1344,10 @@ class AdminController extends BaseController
             ];
 
             if (!$this->validate($rules, $error)) {
-                
+
 
                 $data = $this->validator->getErrors();
-                
+
                 foreach ($data as $error) {
                     $er[] = $error;
                 }
@@ -1428,11 +1446,11 @@ class AdminController extends BaseController
             return $this->response->setJSON($risposta);
         } else {
             $modeluser = new UserModel();
-            $user = $modeluser->where('id',$postData['id'])
-                              ->where('id_association', $useradmin->id_association)
-                               ->first();
+            $user = $modeluser->where('id', $postData['id'])
+                ->where('id_association', $useradmin->id_association)
+                ->first();
             if ($user) {
-                $path = WRITEPATH . '/referti/' . hash('sha256', $user->salt.$user->id) . '/';
+                $path = WRITEPATH . '/referti/' . hash('sha256', $user->salt . $user->id) . '/';
                 if (!is_dir($path)) {
                     mkdir($path, 0777, true);
                 }
@@ -1442,10 +1460,10 @@ class AdminController extends BaseController
                 $risposta = [
                     'msg' => 'ok',
                     'token' => $token,
-                    'salt'=> $user->salt,
-                    'tax'=> $user->Tax_code,
+                    'salt' => $user->salt,
+                    'tax' => $user->Tax_code,
                 ];
-               
+
                 header('Content-Type: application/json');
 
                 return $this->response->setJSON($risposta);
@@ -1594,6 +1612,66 @@ class AdminController extends BaseController
         ];
 
         return view('Adminview\show_report', $data);
+    }
+    private function generateEncryptionKey($salt, $userId)
+    {
+        // Combina salt e user_id e genera un hash SHA-256 per creare una chiave sicura
+        return hash('sha256', $salt . $userId);
+    }
+    public function decryptPdf($encryptedFilePath, $encryptionKey)
+    {
+        // Legge il contenuto del file cifrato
+        $encryptedContent = file_get_contents($encryptedFilePath);
+        if ($encryptedContent === false) {
+            return false;
+        }
+
+        //   lunghezza dell'IV e lo estrae dal contenuto cifrato
+        $cipher = 'aes-256-cbc';
+        $ivlen = openssl_cipher_iv_length($cipher);
+        $iv = substr($encryptedContent, 0, $ivlen); // Estrae l'IV vettore di inizializzazione
+        $encryptedData = substr($encryptedContent, $ivlen); // Estrae i dati cifrati
+
+        // Decifra il contenuto
+        $decryptedContent = openssl_decrypt($encryptedData, $cipher, $encryptionKey, 0, $iv);
+
+        if ($decryptedContent === false) {
+            return false;
+        }
+        $result = file_put_contents($encryptedFilePath, $decryptedContent);
+
+        if ($result === false) {
+            return false;
+        }
+
+        return $encryptedFilePath;
+    }
+
+    public function encryptPdf($filePath, $encryptionKey)
+    {
+        // legge il fie se c'è
+        $fileContent = file_get_contents($filePath);
+        if ($fileContent === false) {
+            return false;
+        }
+
+        $cipher = 'aes-256-cbc';
+        $ivlen = openssl_cipher_iv_length($cipher);
+        $iv = openssl_random_pseudo_bytes($ivlen);
+        $encryptedContent = openssl_encrypt($fileContent, $cipher, $encryptionKey, 0, $iv);
+
+        if ($encryptedContent === false) {
+            return false;
+        }
+
+        $encryptedFilePath = $filePath;
+        $result = file_put_contents($encryptedFilePath, $iv . $encryptedContent);
+
+        if ($result === false) {
+            return false;
+        }
+
+        return $encryptedFilePath;
     }
 
     public function moveFile()
@@ -1746,27 +1824,30 @@ class AdminController extends BaseController
             $modelexam = new exammodel();
             $modelexam->save($examEntity);
             $id = $modelexam->getInsertID();
-            
+
             // Salva il PDF aggiornato
 
             // Invia l'email di conferma memorizza nel db
-           
+
             $newFilePath = WRITEPATH . '/referti/' . hash('sha256', $giver->salt . $giver->id) . '/' . $id . '_' . $filename . '.pdf'; // determiniamo il nome e il percorso del file
-            $directoryreport = WRITEPATH . '/referti/' . hash('sha256', $giver->salt.$giver->id) . '/';
+            $directoryreport = WRITEPATH . '/referti/' . hash('sha256', $giver->salt . $giver->id) . '/';
             if (!is_dir($directoryreport)) {
                 mkdir($directoryreport, 0777, true);
             }
             $pdf->Output($newFilePath, 'F');
+            $keyencrypt = $this->generateEncryptionKey($giver->salt, $giver->id);
+            $encryotfile = $this->encryptPdf($newFilePath, $keyencrypt);
             // 'Eliminiamo I file
             unlink(FCPATH . $oldFilePath);
             unlink($tempdirectory);
-         //invia la mail
-          $emailManager = new EmailManager();
-          $emailManager->getMessage('New_exsam', $giver->id_association, $idgiver);
+            //invia la mail
+            $emailManager = new EmailManager();
+            $emailManager->getMessage('New_exsam', $giver->id_association, $idgiver);
 
             $risposta = [
                 'msg' => 'ok',
                 'token' => $token,
+                'encrypt' => $encryotfile,
 
             ];
             header('Content-Type: application/json');
@@ -1781,7 +1862,7 @@ class AdminController extends BaseController
         $timestamp = $this->request->getPost('timestamp');
         $idexsam = $this->request->getPost('idexsam');
         $user = auth()->user();
-        $filePath = $this->GetWritepath(false) . $user->tax_code . '/' . $filename;
+        $filePath = $this->GetWritepath(false) . $filename;
         // Verifica se il file esiste
         if (file_exists($filePath)) {
             $data = [
@@ -1791,8 +1872,15 @@ class AdminController extends BaseController
             ];
             $download = new FileDownloadModel();
             $download->save($data);
-
-            return $this->response->download($filePath, null);
+            $encryptionKey = $this->generateEncryptionKey($user->salt, $user->id);
+            try {
+                $decryptedContent = $this->decryptFileContent($filePath, $encryptionKey);
+            } catch (Exception $e) {
+                return $this->response->setStatusCode(500, 'Errore durante la decifratura del file');
+            }
+            return $this->response->setContentType('application/pdf')
+            ->setBody($decryptedContent)
+                ->setHeader('Content-Disposition', 'attachment; filename="' . basename($filePath) . '"');
         } else {
             echo 'Il file non esiste.';
         }

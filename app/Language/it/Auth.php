@@ -1,8 +1,15 @@
 <?php
 
 return [
+    
+    'privacyversion'=>'Versione Privacy',
+    'privacyeffective_date'=>'Data Attivazione',
+    'privacycreated_at'=> 'Data Creazione',
+    'privacyis_active'=>'Privacy policy attiva',
+    'privacyis_draft'=>'Privacy policy in bozza',
     'textareaprovacypolicyplaceholder'=>'Immetti il testo della tua privacy policy',
-    'InsertPrivacyPolicy'=>'Privacy policy',
+    'PrivacyPolicy'=>'Gestione privacy policy',
+    'InsertPrivacyPolicy'=>'Nuova policy',
     'btnattivautente'=>'Attiva',
     'noregisrationcomplete' => 'Sembra che non hai completato la registrazione della tua azienda, vai alla sezione Dati
      associazione e compleata la tua iscrizione ',
@@ -171,11 +178,11 @@ return [
     'confirm' => 'Conferma',
     'editandconfirm' => 'Edita l\'apputamento e confermalo',
     'overview' => 'Panoramica',
-    'calendar' => 'Calendario Donazioni',
+    'calendar' => 'Calendario donazioni',
     'newReport' => 'Carica nuovi referti',
     'workReport' => 'Visiona referti',
     'changepassword' => 'Cambia password',
-    'editcompany' => 'Dati Associazione',
+    'editcompany' => 'Dati associazione',
     'newUser' => 'Nuovo donatore',
     'esci' => 'Logout',
     'tabellanuoviutenti' => 'Elenco Nuovi utenti da verificare',

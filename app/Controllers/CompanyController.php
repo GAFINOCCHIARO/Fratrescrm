@@ -690,10 +690,18 @@ class CompanyController extends BaseController
 
         return view('registration\new_company', $data);
     }
-
+    public function GetAllpolicy()
+    {
+      $Privacy = new privacymodel();
+      $user= auth()->user();
+      $Allprivacy= $Privacy->where('company_id ',$user->id_association)
+                           ->findAll();
+    return view('Adminview\ListCompanyPolicy',['allprivacy'=> $Allprivacy]);   
+        
+    }
     public function InsertPrivacyPolicy()
     {
-        return view('Adminview\editprivacypolicy');
+        return view('Adminview\newpolicy');
     }
 
     public function UpdateCompanydata()

@@ -6,7 +6,7 @@ use CodeIgniter\Model;
 
 class PrivacypoliciesModel extends Model
 {
-    protected $table            = 'privacypolicies';
+    protected $table            = 'privacy_policies';
     protected $primaryKey       = 'id';
     protected $useAutoIncrement = true;
     protected $returnType       = \App\Entities\PrivacypoliciesEntity::class;

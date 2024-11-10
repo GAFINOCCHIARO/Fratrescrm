@@ -2,7 +2,9 @@
 
 namespace App\Controllers;
 
+use App\Models\FileDownloadModel;
 use App\Models\UserModel;
+use App\Controllers\AdminController;
 use App\Models\BusinessHoursModel as hoursmodel;
 use App\Models\CompanyModels as companymodel;
 use App\Models\RepetitiveappointmentModel as RepAppoint;
@@ -13,6 +15,7 @@ use CodeIgniter\I18n\Time;
 use DateTime;
 use DateInterval;
 use DatePeriod;
+use Exception;
 
 class UserController extends BaseController
 {
@@ -24,7 +27,7 @@ class UserController extends BaseController
         }
         // file report
 
-        $directory = WRITEPATH . '/referti/' . $user->Tax_code . '/';
+        $directory= WRITEPATH . '/referti/' . hash('sha256', $user->salt . $user->id) . '/';
         if (!is_dir($directory)) {
             mkdir($directory, 0777, true);
         }
@@ -327,4 +330,6 @@ class UserController extends BaseController
             }
         }
     }
+    
+   
 }
