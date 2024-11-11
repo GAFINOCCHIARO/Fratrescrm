@@ -1,7 +1,8 @@
 <?php
 
 return [
-    
+    'privacyactive'=>'Policy Attiva',
+    'privacytext'=>'Testo Privacy',
     'privacyversion'=>'Versione Privacy',
     'privacyeffective_date'=>'Data Attivazione',
     'privacycreated_at'=> 'Data Creazione',

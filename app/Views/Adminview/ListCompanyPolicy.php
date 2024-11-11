@@ -18,6 +18,7 @@
        <table class="w3-table w3-striped w3-white w3-border-black" style=" max-height: 300px; overflow:scroll "
            id="RequestAppointmentTable">
            <thead>
+               <th><?php echo lang('Auth.privacytext'); ?></th>
                <th><?php echo lang('Auth.privacyversion'); ?></th>
                <th><?php echo lang('Auth.privacyeffective_date'); ?></th>
                <th><?php echo lang('Auth.privacycreated_at'); ?></th>
@@ -30,26 +31,27 @@
 
                 foreach ($allprivacy as $privacy) {
                 ?>
-               <tr id="rowpendig<?php echo $privacy->id; ?>">
-                   <td> <?php echo esc($privacy->version); ?> </td>
-                   <td> <?php echo esc($privacy->effective_date); ?> </td>
-                   <td> <?php echo esc($privacy->created_at); ?> </td>
-                   <td> <?php echo esc($privacy->is_active); ?> </td>
-                   <td> <?php echo esc($privacy->is_draft); ?> </td>
-                   <td> <button class="w3-button w3-xlarge w3-green editappoint"
-                           title="<?php echo lang('Auth.editandconfirm'); ?>" id="editappoint"
-                           data-id="<?php echo $appointment->id_appointment; ?>"><i class="fa fa-check-square"
-                               aria-hidden="true"></i>
-                       </button>
-                   </td>
-                   <td> <button class="w3-button w3-xlarge w3-green delappoint"
-                           title="<?php echo lang('Auth.editandconfirm'); ?>" id="delappoint"
-                           data-id="<?php echo $appointment->id_appointment; ?>"><i class="fa fa-trash"
-                               aria-hidden="true"></i>
-                       </button>
-                   </td>
+                   <tr id="rowpendig<?php echo $privacy->id; ?>">
+                       <td> <textarea class="w3-input w3-border w3-round-xlarge" cols="60" rows="5"><?php echo esc($privacy->policy_text); ?></textarea> </td>
+                       <td> <?php echo esc($privacy->version); ?> </td>
+                       <td> <?php echo esc($privacy->effective_date); ?> </td>
+                       <td> <?php echo esc($privacy->created_at); ?> </td>
+                       <td> <?php if ($privacy->is_active == 0) {
+                            ?><button class="w3-green w3-btn active data-id=" <?php echo $privacy->id; ?>">
+                                   <i class="fa fa-check-square" aria-hidden="true"></i>
+                                   Attiva</button> <?php
+                                                } else {
+                                                    echo lang('Auth.privacyactive');
+                                                } ?></td>
+                       <td> <?php if ($privacy->is_draft) { ?>
+                               <button class="w3-btn w3-blue edit" data-id="<?php echo $privacy->id; ?>"><i class="fa fa-pencil-square-o" aria-hidden="true"></i> Edit</button><?php } ?>
+                       </td>
+                       <td>
+                       </td>
+                       <td>
+                       </td>
 
-               </tr>
+                   </tr>
                <?php
                 }
                 ?>
@@ -80,5 +82,34 @@
        </div>
    </div>
    <script type="text/javascript">
+       $('#saveprivacypolicy').click(function(e) {
+           e.preventDefault();
+           $('#loading').show();
+           var csrfName = 'csrf_token'; // CSRF Token name
+           var csrfHash = $('input[name="csrf_token"]').val(); // CSRF hash 
+           $.ajax({
+               type: "post",
+               url: "<?php echo site_url('saveprivacypolicy'); ?>",
+               data: {
+                   privacytext: $('#privacytext').val(),
+                   [csrfName]: csrfHash,
+               },
+               dataType: "json",
+               success: function(data) {
+                   $('#loading').hide();
+                   $('input[name="csrf_token"]').val(data.token);
+                   $('#error').html(data.error);
 
+
+               }
+           });
+       })
+       $('.edit').click(function(e) {
+           e.preventDefault
+           alert('edit');
+       });
+       $('.active').click(function(e) {
+           e.preventDefault();
+           alert('active');
+       });
    </script>

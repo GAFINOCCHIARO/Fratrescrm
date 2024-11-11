@@ -45,7 +45,7 @@ $routes->group('', ['filter' => 'login'], static function ($routes) {
     
     $routes->post('GetAllCompanypolicy','CompanyController::GetAllpolicy',['filte=>login:admin.InsertPrivacyPolicy']);
     $routes->post('InsertPrivacyPolicy','CompanyController::InsertPrivacyPolicy',['filter'=> 'login:admin.InsertPrivacyPolicy']);
-    
+    $routes->post('saveprivacypolicy', 'CompanyController::Saveprivacypolicy', ['filter' => 'login:admin.InsertPrivacyPolicy']);
     $routes->post('ManageCalendar', 'appointments::ManageCalendar', ['filter' => 'login:admin.createappointments']);
     $routes->post('insertRepetitiveDays', 'appointments::insertRepetitiveDays', ['filter' => 'login:admin.createappointments']);
     $routes->post('addevent', 'Appointments::addevent', ['filter=>login:admin.createappointments']);

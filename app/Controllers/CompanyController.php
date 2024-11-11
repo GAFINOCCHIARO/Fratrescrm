@@ -449,7 +449,7 @@ class CompanyController extends BaseController
                     'is_unique[auth_identities.secret]',
                 ],
             ],
-            'gender'=>[
+            'gender' => [
                 'rules' => [
                     'required',
                     'in_list[M,F]',
@@ -554,7 +554,7 @@ class CompanyController extends BaseController
                 'min_length' => lang('Auth.prbmin_length'),
                 'regex_match' => lang('Auth.prbreregex_match'),
             ],
-            'gender'=> [
+            'gender' => [
                 'required' => lang('Auth.genderRequired'),
                 'in_list' => lang('Auth.genderInlist'),
             ],
@@ -570,6 +570,21 @@ class CompanyController extends BaseController
             $random_string .= $char[rand(0, $maxlenght - 1)];
         }
         return $random_string;
+    }
+    private function getprivacyversion($idassociation)
+    {
+        $privacy = new privacymodel();
+        $privacyversion = $privacy->selectMax('version')
+            ->where('company_id', $idassociation)
+            ->get()
+            ->getFirstRow();
+
+        if (!$privacyversion || !$privacyversion->version) {
+            return 1; // La versione predefinita se non trovata
+        }
+
+        //   valore della versione
+        return $privacyversion->version;
     }
     public function InsertCompany()
     {
@@ -656,7 +671,7 @@ class CompanyController extends BaseController
                     'authorized' => 1,
                     'first_name' => $postData['first_name'],
                     'id_association' => $lastid,
-                    'gender'=>$postData['gender'],
+                    'gender' => $postData['gender'],
                     'salt' => bin2hex(random_bytes(16)),
 
                 ];
@@ -664,7 +679,7 @@ class CompanyController extends BaseController
                 $users = auth()->getProvider();
                 $users->save($user);
                 $user = $users->findById($users->getInsertID());
-                $user->addGroup('superadmin');               
+                $user->addGroup('superadmin');
                 return redirect()->to('login');
             }
         }
@@ -692,12 +707,11 @@ class CompanyController extends BaseController
     }
     public function GetAllpolicy()
     {
-      $Privacy = new privacymodel();
-      $user= auth()->user();
-      $Allprivacy= $Privacy->where('company_id ',$user->id_association)
-                           ->findAll();
-    return view('Adminview\ListCompanyPolicy',['allprivacy'=> $Allprivacy]);   
-        
+        $Privacy = new privacymodel();
+        $user = auth()->user();
+        $Allprivacy = $Privacy->where('company_id ', $user->id_association)
+            ->findAll();
+        return view('Adminview\ListCompanyPolicy', ['allprivacy' => $Allprivacy]);
     }
     public function InsertPrivacyPolicy()
     {
@@ -792,6 +806,7 @@ class CompanyController extends BaseController
             }
         }
     }
+
     public function Saveprivacypolicy()
     {
         $request = service('request');
@@ -822,7 +837,7 @@ class CompanyController extends BaseController
             $modelprvacy = new privacymodel();
             $privacydata = [
                 'company_id' => $user->id_association,
-                'version' => 1,
+                'version' => $this->getprivacyversion($user->id_association),
                 'policy_text' => $privacypolicy,
                 'created_at' => Time::today(),
                 'is_active' => 0,
@@ -833,7 +848,7 @@ class CompanyController extends BaseController
             $risposta = [
                 'msg' => 'ok',
                 'token' => $token,
-                'id' => $postData['id'],
+                
             ];
             //  $this->SendEmail($to, $subject,$from,$name,$message);
             header('Content-Type: application/json');
