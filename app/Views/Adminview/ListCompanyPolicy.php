@@ -30,31 +30,31 @@
 
                 foreach ($allprivacy as $privacy) {
                 ?>
-               <tr id="rowpendig<?php echo $privacy->id; ?>">
-                   <td> <textarea class="w3-input w3-border w3-round-xlarge" cols="60" rows="5"
-                           id="text<?php echo $privacy->id; ?>"><?php echo esc($privacy->policy_text); ?></textarea>
-                   </td>
-                   <td> <?php echo esc($privacy->version); ?> </td>
-                   <td> <?php echo esc($privacy->effective_date); ?> </td>
-                   <td id="create<?php echo $privacy->id; ?>"> <?php echo esc($privacy->created_at); ?> </td>
-                   <td> <?php if ($privacy->is_active == 0) {
+                   <tr id="rowpendig<?php echo $privacy->id; ?>">
+                       <td> <textarea class="w3-input w3-border w3-round-xlarge" cols="60" rows="5"
+                               id="text<?php echo $privacy->id; ?>"><?php echo esc($privacy->policy_text); ?></textarea>
+                       </td>
+                       <td> <?php echo esc($privacy->version); ?> </td>
+                       <td> <?php echo esc($privacy->effective_date); ?> </td>
+                       <td id="create<?php echo $privacy->id; ?>"> <?php echo esc($privacy->created_at); ?> </td>
+                       <td> <?php if ($privacy->is_active == 0) {
                             ?><button class="w3-green w3-btn active" data-id="<?php echo $privacy->id; ?>">
-                           <i class="fa fa-check-square" aria-hidden="true"></i>
-                           Attiva</button> <?php
+                                   <i class="fa fa-check-square" aria-hidden="true"></i>
+                                   Attiva</button> <?php
                                                 } else {
                                                     echo lang('Auth.privacyactive');
                                                 } ?></td>
-                   <td>
-                       <button class="w3-btn w3-blue edit" data-id="<?php echo $privacy->id; ?>">
-                           <i class="fa fa-pencil-square-o" aria-hidden="true"></i>
-                           Edit </button>
-                   </td>
-                   <td>
-                   </td>
-                   <td>
-                   </td>
+                       <td>
+                           <button class="w3-btn w3-blue edit" data-id="<?php echo $privacy->id; ?>">
+                               <i class="fa fa-pencil-square-o" aria-hidden="true"></i>
+                               Edit </button>
+                       </td>
+                       <td>
+                       </td>
+                       <td>
+                       </td>
 
-               </tr>
+                   </tr>
                <?php
                 }
                 ?>
@@ -86,32 +86,32 @@
        </div>
    </div>
    <script type="text/javascript">
-$('#saveprivacypolicy').click(function(e) {
-    e.preventDefault();
-    $('#loading').show();
-    var csrfName = 'csrf_token'; // CSRF Token name
-    var csrfHash = $('input[name="csrf_token"]').val(); // CSRF hash 
-    $.ajax({
-        type: "post",
-        url: "<?php echo site_url('saveprivacypolicy'); ?>",
-        data: {
-            privacytext: $('#privacytext').val(),
-            id: $('#idpolicy').val(),
-            [csrfName]: csrfHash,
-        },
-        dataType: "json",
-        success: function(data) {
-            $('#loading').hide();
-            $('#insertprivacy').hide();
-            $('input[name="csrf_token"]').val(data.token);
-            $('#error').html(data.error);
-            if (data.msg == 'update') {
-                $('#text' + data.id).val(data.text);
-                $('#create' + data.id).html(data.created_at.data);
-            }
-            if (data.msg == 'insert') {
-                console.log(data);
-                const newRow = `
+       $('#saveprivacypolicy').click(function(e) {
+           e.preventDefault();
+           $('#loading').show();
+           var csrfName = 'csrf_token'; // CSRF Token name
+           var csrfHash = $('input[name="csrf_token"]').val(); // CSRF hash 
+           $.ajax({
+               type: "post",
+               url: "<?php echo site_url('saveprivacypolicy'); ?>",
+               data: {
+                   privacytext: $('#privacytext').val(),
+                   id: $('#idpolicy').val(),
+                   [csrfName]: csrfHash,
+               },
+               dataType: "json",
+               success: function(data) {
+                   $('#loading').hide();
+                   $('#insertprivacy').hide();
+                   $('input[name="csrf_token"]').val(data.token);
+                   $('#error').html(data.error);
+                   if (data.msg == 'update') {
+                       $('#text' + data.id).val(data.text);
+                       $('#create' + data.id).html(data.created_at.data);
+                   }
+                   if (data.msg == 'insert') {
+                       console.log(data);
+                       const newRow = `
         <tr id="rowpendig${data.id}">
             <td><textarea class="w3-input w3-border w3-round-xlarge" cols="60" rows="5" id="text${data.id}">${data.privacy.policy_text}</textarea></td>
             <td>${data.privacy.version}</td>
@@ -119,49 +119,69 @@ $('#saveprivacypolicy').click(function(e) {
             <td id="create${data.id}"></td>
             <td><button class="w3-green w3-btn active" data-id="${data.id}"><i class="fa fa-check-square" aria-hidden="true"></i> Attiva</button></td>
             <td><button class="w3-btn w3-blue edit" data-id="${data.id}"><i class="fa fa-pencil-square-o" aria-hidden="true"></i> Edit</button></td>
-            <td><button class="w3-btn"><i class="fa fa-trash" aria-hidden="true"></i></button></td>
+         
         </tr>`;
-        console.log(newRow);
-                $('#listpolicy > tbody').append(newRow);
-            }
+                       console.log(newRow);
+                       $('#listpolicy > tbody').append(newRow);
+                   }
 
 
-        }
-    });
-})
-$(document).on('click', '.edit', function(e) {
-    e.preventDefault();
-    $('#loading').show();
-    let edit = $(this).data('id');
-    var csrfName = 'csrf_token';
-    var csrfHash = $('input[name="csrf_token"]').val();
-    $.ajax({
-        type: "post",
-        url: "<?php echo site_url('editpolicy'); ?>",
-        data: {
-            id: edit,
-            [csrfHash]: csrfHash,
-        },
-        dataType: "json",
-        success: function(response) {
-            $('#loading').hide();
-            $('input[name="csrf_token"]').val(response.token);
-            $('#idpolicy').val(response.id);
-            $('#insertprivacy').show();
-            $('#privacytext').val(response.privacytext);
-            if (response.iscative == 1) {
-                $('#buttonsave').remove();
-            } else {
-                $('#saveprivacypolicy').removeClass('w3-green').addClass('w3-blue');
-            }
+               }
+           });
+       })
+       $(document).on('click', '.edit', function(e) {
+           e.preventDefault();
+           $('#loading').show();
+           let edit = $(this).data('id');
+           var csrfName = 'csrf_token';
+           var csrfHash = $('input[name="csrf_token"]').val();
+           $.ajax({
+               type: "post",
+               url: "<?php echo site_url('editpolicy'); ?>",
+               data: {
+                   id: edit,
+                   [csrfHash]: csrfHash,
+               },
+               dataType: "json",
+               success: function(response) {
+                   $('#loading').hide();
+                   console.log(response);
+                   $('input[name="csrf_token"]').val(response.token);
+                   $('#idpolicy').val(response.id);
+                   $('#insertprivacy').show();
+                   $('#privacytext').val(response.privacytext);
+                   if (response.active == true) {
+                       $('#saveprivacypolicy').remove();
+                   } else {
+                       $('#saveprivacypolicy').removeClass('w3-green').addClass('w3-blue');
+                   }
 
-        }
-    });
-});
-$(document).on('click', 'active', function(e) {
-    e.preventDefault();
-    let idactive = $(this).data('id');
+               }
+           });
+       });
+       $(document).on('click', '.active', function(e) {
+           e.preventDefault();
+           $('#loading').show();
+           let idactive = $(this).data('id');
+           var csrfName = 'csrf_token'; // CSRF Token name
+           var csrfHash = $('input[name="csrf_token"]').val(); // CSRF hash 
+           $.ajax({
+               type: "post",
+               url: "<?php echo site_url('activepolicy'); ?>",
+               data: {
+                   idactive: idactive,
+                   [csrfName]: csrfHash,
+               },
+               dataType: "json",
+               success: function(data) {
+                   $('#loading').hide();
+                   $('#insertprivacy').hide();
+                   $('input[name="csrf_token"]').val(data.token);
 
 
-});
+
+
+               }
+           });
+       });
    </script>

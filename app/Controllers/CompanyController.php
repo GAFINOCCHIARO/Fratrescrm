@@ -907,4 +907,35 @@ class CompanyController extends BaseController
         ];
         return $this->response->setJSON($data);
     }
+    public function activepolicy()
+    {
+       $token=csrf_hash();
+        $restdata=[
+            'effective_date'=>null,
+            'is_active'=>0, 
+        ];
+        $uodatedata=[
+            'effective_date' => Time::today(),
+            'is_active'=>1,
+            'is_draft'=>0,
+        ];
+        $user = auth()->user();
+        $token = csrf_hash();
+        $id = $this->request->getPost('idactive');
+        $modelprivacy = new privacymodel();
+        $modelprivacy ->where('company_id', $user->id_association)
+            ->set($restdata)
+            ->update();
+        $modelprivacy->where('id',$id)
+                     ->where('company_id', $user->id_association)
+                     ->set($uodatedata)
+                     ->update();
+        $risposta=[
+            'msg'=>'ok',
+            'token'=>$token,
+            'id'=>$id,
+        ];
+        return $this->response->setJSON($risposta);
+    }
+
 }
