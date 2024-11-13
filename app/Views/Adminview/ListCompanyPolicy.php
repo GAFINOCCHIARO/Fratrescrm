@@ -15,8 +15,7 @@
    <h2 class="w3-center"> Privacy policy</h2>
    <?php echo csrf_field(); ?>
    <div class="w3-responsive w3-margin w3-container w3-card-4">
-       <table class="w3-table w3-striped w3-white w3-border-black" style=" max-height: 300px; overflow:scroll "
-           id="RequestAppointmentTable">
+       <table class="w3-table w3-striped w3-white w3-border-black" id="listpolicy">
            <thead>
                <th><?php echo lang('Auth.privacytext'); ?></th>
                <th><?php echo lang('Auth.privacyversion'); ?></th>
@@ -31,27 +30,31 @@
 
                 foreach ($allprivacy as $privacy) {
                 ?>
-                   <tr id="rowpendig<?php echo $privacy->id; ?>">
-                       <td> <textarea class="w3-input w3-border w3-round-xlarge" cols="60" rows="5"><?php echo esc($privacy->policy_text); ?></textarea> </td>
-                       <td> <?php echo esc($privacy->version); ?> </td>
-                       <td> <?php echo esc($privacy->effective_date); ?> </td>
-                       <td> <?php echo esc($privacy->created_at); ?> </td>
-                       <td> <?php if ($privacy->is_active == 0) {
-                            ?><button class="w3-green w3-btn active data-id=" <?php echo $privacy->id; ?>">
-                                   <i class="fa fa-check-square" aria-hidden="true"></i>
-                                   Attiva</button> <?php
+               <tr id="rowpendig<?php echo $privacy->id; ?>">
+                   <td> <textarea class="w3-input w3-border w3-round-xlarge" cols="60" rows="5"
+                           id="text<?php echo $privacy->id; ?>"><?php echo esc($privacy->policy_text); ?></textarea>
+                   </td>
+                   <td> <?php echo esc($privacy->version); ?> </td>
+                   <td> <?php echo esc($privacy->effective_date); ?> </td>
+                   <td id="create<?php echo $privacy->id; ?>"> <?php echo esc($privacy->created_at); ?> </td>
+                   <td> <?php if ($privacy->is_active == 0) {
+                            ?><button class="w3-green w3-btn active" data-id="<?php echo $privacy->id; ?>">
+                           <i class="fa fa-check-square" aria-hidden="true"></i>
+                           Attiva</button> <?php
                                                 } else {
                                                     echo lang('Auth.privacyactive');
                                                 } ?></td>
-                       <td> <?php if ($privacy->is_draft) { ?>
-                               <button class="w3-btn w3-blue edit" data-id="<?php echo $privacy->id; ?>"><i class="fa fa-pencil-square-o" aria-hidden="true"></i> Edit</button><?php } ?>
-                       </td>
-                       <td>
-                       </td>
-                       <td>
-                       </td>
+                   <td>
+                       <button class="w3-btn w3-blue edit" data-id="<?php echo $privacy->id; ?>">
+                           <i class="fa fa-pencil-square-o" aria-hidden="true"></i>
+                           Edit </button>
+                   </td>
+                   <td>
+                   </td>
+                   <td>
+                   </td>
 
-                   </tr>
+               </tr>
                <?php
                 }
                 ?>
@@ -69,12 +72,13 @@
                </header>
                <div class=" w3-container w3-margin ">
                    <div class="w3-row">
+                       <input type="hidden" name="idpolicy" id='idpolicy' value="0">
                        <textarea name="privacytext" id="privacytext" cols="100" rows="10"
                            class="w3-inputw3 w3-border w3-round-xlarge"
                            placeholder="<?php echo lang('Auth.textareaprovacypolicyplaceholder'); ?>"></textarea>
                    </div>
-                   <div class="w3-row">
-                       <button class="w3-button w3-block w3-section w3-green w3-ripple w3-padding"
+                   <div class="w3-row" id="buttonsave">
+                       <button class="w3-button w3-block w3-section w3-green  w3-ripple w3-padding "
                            id="saveprivacypolicy"><?php echo lang('Auth.btnsave'); ?></button>
                    </div>
                </div>
@@ -82,34 +86,82 @@
        </div>
    </div>
    <script type="text/javascript">
-       $('#saveprivacypolicy').click(function(e) {
-           e.preventDefault();
-           $('#loading').show();
-           var csrfName = 'csrf_token'; // CSRF Token name
-           var csrfHash = $('input[name="csrf_token"]').val(); // CSRF hash 
-           $.ajax({
-               type: "post",
-               url: "<?php echo site_url('saveprivacypolicy'); ?>",
-               data: {
-                   privacytext: $('#privacytext').val(),
-                   [csrfName]: csrfHash,
-               },
-               dataType: "json",
-               success: function(data) {
-                   $('#loading').hide();
-                   $('input[name="csrf_token"]').val(data.token);
-                   $('#error').html(data.error);
+$('#saveprivacypolicy').click(function(e) {
+    e.preventDefault();
+    $('#loading').show();
+    var csrfName = 'csrf_token'; // CSRF Token name
+    var csrfHash = $('input[name="csrf_token"]').val(); // CSRF hash 
+    $.ajax({
+        type: "post",
+        url: "<?php echo site_url('saveprivacypolicy'); ?>",
+        data: {
+            privacytext: $('#privacytext').val(),
+            id: $('#idpolicy').val(),
+            [csrfName]: csrfHash,
+        },
+        dataType: "json",
+        success: function(data) {
+            $('#loading').hide();
+            $('#insertprivacy').hide();
+            $('input[name="csrf_token"]').val(data.token);
+            $('#error').html(data.error);
+            if (data.msg == 'update') {
+                $('#text' + data.id).val(data.text);
+                $('#create' + data.id).html(data.created_at.data);
+            }
+            if (data.msg == 'insert') {
+                console.log(data);
+                const newRow = `
+        <tr id="rowpendig${data.id}">
+            <td><textarea class="w3-input w3-border w3-round-xlarge" cols="60" rows="5" id="text${data.id}">${data.privacy.policy_text}</textarea></td>
+            <td>${data.privacy.version}</td>
+            <td>${data.privacy.created_at.date}</td>
+            <td id="create${data.id}"></td>
+            <td><button class="w3-green w3-btn active" data-id="${data.id}"><i class="fa fa-check-square" aria-hidden="true"></i> Attiva</button></td>
+            <td><button class="w3-btn w3-blue edit" data-id="${data.id}"><i class="fa fa-pencil-square-o" aria-hidden="true"></i> Edit</button></td>
+            <td><button class="w3-btn"><i class="fa fa-trash" aria-hidden="true"></i></button></td>
+        </tr>`;
+        console.log(newRow);
+                $('#listpolicy > tbody').append(newRow);
+            }
 
 
-               }
-           });
-       })
-       $('.edit').click(function(e) {
-           e.preventDefault
-           alert('edit');
-       });
-       $('.active').click(function(e) {
-           e.preventDefault();
-           alert('active');
-       });
+        }
+    });
+})
+$(document).on('click', '.edit', function(e) {
+    e.preventDefault();
+    $('#loading').show();
+    let edit = $(this).data('id');
+    var csrfName = 'csrf_token';
+    var csrfHash = $('input[name="csrf_token"]').val();
+    $.ajax({
+        type: "post",
+        url: "<?php echo site_url('editpolicy'); ?>",
+        data: {
+            id: edit,
+            [csrfHash]: csrfHash,
+        },
+        dataType: "json",
+        success: function(response) {
+            $('#loading').hide();
+            $('input[name="csrf_token"]').val(response.token);
+            $('#idpolicy').val(response.id);
+            $('#insertprivacy').show();
+            $('#privacytext').val(response.privacytext);
+            if (response.iscative == 1) {
+                $('#buttonsave').remove();
+            } else {
+                $('#saveprivacypolicy').removeClass('w3-green').addClass('w3-blue');
+            }
+
+        }
+    });
+});
+$(document).on('click', 'active', function(e) {
+    e.preventDefault();
+    let idactive = $(this).data('id');
+
+
+});
    </script>

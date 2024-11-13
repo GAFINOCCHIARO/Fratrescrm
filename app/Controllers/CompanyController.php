@@ -581,6 +581,8 @@ class CompanyController extends BaseController
 
         if (!$privacyversion || !$privacyversion->version) {
             return 1; // La versione predefinita se non trovata
+        }else{
+            return $privacyversion->version+1;
         }
 
         //   valore della versione
@@ -816,7 +818,9 @@ class CompanyController extends BaseController
             'privacytext' => 'required',
         ];
         $error = [
-            'privacytext' => lang('idnonvalido'),
+            'privacytext' => [
+                'required' => lang('privacyrequired'),
+            ],
         ];
         if (!$this->validate($rules, $error)) {
             $data = $this->validator->getErrors();
@@ -832,28 +836,75 @@ class CompanyController extends BaseController
 
             return $this->response->setJSON($risposta);
         } else {
-            $user = auth()->user();
-            $privacypolicy = $postData['privacytext'];
             $modelprvacy = new privacymodel();
-            $privacydata = [
-                'company_id' => $user->id_association,
-                'version' => $this->getprivacyversion($user->id_association),
-                'policy_text' => $privacypolicy,
-                'created_at' => Time::today(),
-                'is_active' => 0,
-                'is_draft' => 1,
+            $user = auth()->user();
+            if ($postData['id'] == 0) {
+                $privacypolicy = $postData['privacytext'];
+              
+                $privacydata = [
+                    'company_id' => $user->id_association,
+                    'version' => $this->getprivacyversion($user->id_association),
+                    'policy_text' => $privacypolicy,
+                    'created_at' => Time::today(),
+                    'is_active' => 0,
+                    'is_draft' => 1,
 
-            ];
-            $modelprvacy->save($privacydata);
-            $risposta = [
-                'msg' => 'ok',
-                'token' => $token,
-                
-            ];
+                ];
+                $modelprvacy->save($privacydata);
+                $id=$modelprvacy->getInsertID();
+                $risposta = [
+                    'msg' => 'insert',
+                    'privacy'=>$privacydata,
+                    'token' => $token,
+                    'id'=>$id,
+
+                ];
+            }else{
+                $datatoupdate=[
+                    'policy_text' => $postData['privacytext'],
+                    'created_at' => Time::today(),
+                ];
+                $modelprvacy->where('id',$postData['id'])
+                            ->where('company_id', $user->id_association)
+                            ->set($datatoupdate)
+                            ->update();
+              
+                $risposta = [
+                    'msg' => 'update',
+                    'id'=> $postData['id'],
+                    'text'=> $postData['privacytext'],
+                    'created_at' => Time::today(),
+                    'token' => $token,
+               ];
+            }
             //  $this->SendEmail($to, $subject,$from,$name,$message);
             header('Content-Type: application/json');
 
             return $this->response->setJSON($risposta);
         }
+    }
+    public function editpolicy()
+    {
+        $user = auth()->user();
+        $token = csrf_hash();
+        $id = $this->request->getPost('id');
+        $privacymodel = new privacymodel();
+        $privacy = $privacymodel->where('id', $id)
+            ->where('company_id', $user->id_association)
+            ->first();
+        if ($privacy->is_active) {
+            $active = true;
+        } else {
+            $active = false;
+        }
+
+        $data = [
+            'privacytext' => $privacy->policy_text,
+            'active' => $active,
+            'token' => $token,
+            'id' => $privacy->id,
+
+        ];
+        return $this->response->setJSON($data);
     }
 }

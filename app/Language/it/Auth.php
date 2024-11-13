@@ -1,6 +1,8 @@
 <?php
 
 return [
+    'privacyrequired'=> 'Il testo Privacy è obbligatorio',
+    'privacyEdit'=>'Edit policy',
     'privacyactive'=>'Policy Attiva',
     'privacytext'=>'Testo Privacy',
     'privacyversion'=>'Versione Privacy',
