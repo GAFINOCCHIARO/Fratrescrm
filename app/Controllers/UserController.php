@@ -2,15 +2,16 @@
 
 namespace App\Controllers;
 
-use App\Models\FileDownloadModel;
+//use App\Models\FileDownloadModel;
 use App\Models\UserModel;
-use App\Controllers\AdminController;
+use App\Controllers\PrivacyController;
 use App\Models\BusinessHoursModel as hoursmodel;
 use App\Models\CompanyModels as companymodel;
+
 use App\Models\RepetitiveappointmentModel as RepAppoint;
-use App\Models\EventCalendarModel as eventcalendar;
+//use App\Models\EventCalendarModel as eventcalendar;
 use App\Controllers\Appointments as checkappoint;
-use CodeIgniter\Validation\StrictRules\Rules;
+//use CodeIgniter\Validation\StrictRules\Rules;
 use CodeIgniter\I18n\Time;
 use DateTime;
 use DateInterval;
@@ -25,12 +26,18 @@ class UserController extends BaseController
         if (auth()->user()->requiresPasswordReset()) {
             return redirect()->to('ForceResetPassword');
         }
+
+        // verifica consenso privacy
+        $privacy= new PrivacyController();
+        $privacy->privacycheck(); //se privacy check non è ok verrà visulalizzato il popup di accettazione termini
         // file report
 
-        $directory= WRITEPATH . '/referti/' . hash('sha256', $user->salt . $user->id) . '/';
+        $directory = WRITEPATH . '/referti/' . hash('sha256', $user->salt . $user->id) . '/';
         if (!is_dir($directory)) {
             mkdir($directory, 0777, true);
         }
+
+
 
         $ReportFiles = array_diff(scandir($directory), ['.', '..']);
         $fileList = [];
@@ -67,7 +74,6 @@ class UserController extends BaseController
 
         return view('user\UserHomepage', $data);
     }
-
     public function UpdateAvatarimage()
     {
         $request = service('request');
@@ -324,12 +330,10 @@ class UserController extends BaseController
                 $response = [
                     'token' => $token,
                     'msg' => 200,
-                    'okmsg'=> lang('Auth.okmsg'),
+                    'okmsg' => lang('Auth.okmsg'),
                 ];
                 return $this->response->setJSON($response);
             }
         }
     }
-    
-   
 }

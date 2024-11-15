@@ -1,7 +1,7 @@
 <?php
 
 namespace App\Controllers;
-
+use App\Controllers\PrivacyController;
 use App\Entities\ExamEntity as exam;
 use App\Libraries\EmailManager;
 use App\Models\CompanyModels as ModelCompany;
@@ -45,12 +45,12 @@ class AdminController extends BaseController
         $pdf->SetY(10);
         $pdf->SetFont('helvetica', 'B', 12);
 
-        $headerText = "Report by: {$company->company_name}\n";
-        $headerText .= "Address: {$company->company_address}\n";
-        $headerText .= "City: {$company->company_city}\n";
-        $headerText .= "Phone: {$company->company_phone}\n";
+        $headerText = "Refertato da: {$company->company_name}\n";
+        $headerText .= "Indirizzo: {$company->company_address}\n";
+        $headerText .= "Città: {$company->company_city}\n";
+        $headerText .= "Telefono: {$company->company_phone}\n";
         $headerText .= "Email: {$company->company_email}\n";
-        $headerText .= "VAT: {$company->company_vat}\n";
+        $headerText .= "Partita iva: {$company->company_vat}\n";
 
         $pdf->MultiCell(0, 10, $headerText, 0, 'C');
     }
@@ -59,8 +59,8 @@ class AdminController extends BaseController
     {
         $pdf->SetY(-15);
         $pdf->SetFont('helvetica', 'I', 8);
-        $footerText = "Company: {$company->company_name}, Address: {$company->company_address}, City: {$company->company_city}, Phone: {$company->company_phone}, Email: {$company->company_email}\n";
-        $footerText .= "User: {$user->name} {$user->surname}";
+        $footerText = "Associazione: {$company->company_name}, Indirizzo: {$company->company_address}, Città: {$company->company_city}, Telefono: {$company->company_phone}, Email: {$company->company_email}\n";
+        $footerText .= "Utente: {$user->name} {$user->surname}";
         $pdf->Cell(0, 10, $footerText, 0, 0, 'C');
     }
 
@@ -1025,6 +1025,8 @@ class AdminController extends BaseController
                     'msg' => 'success',
                     'token' => $token,
                 ];
+                $consent= new PrivacyController();
+                $consent->Savenewconsent($user->id,$user->id_association);
                 return $this->response->setJSON($risposta);
             }
         }

@@ -19,6 +19,12 @@ class Appointments extends BaseController
         $user = auth()->user();
         $company = new companymodel();
         $companydata = $company->find($user->id_association);
+
+        $collection_type=[
+            'dplasma'=> $companydata->dplasma,
+            'dsangue'=>$companydata->dsangue,
+            'dpiastrine'=>$companydata->dpiastrine,
+        ];
         $WorkingHours = new hoursmodel();
         $dataWorkingHours = $WorkingHours->getBusinessHoursByCompany($user->id_association);
         $RepAppoints = new RepAppoint();
@@ -32,6 +38,7 @@ class Appointments extends BaseController
             'dataWorkingHours' => $dataWorkingHours,
             'repetitiveappoint' => $dataRepititiveAppointment,
             'eventlist' => $eventlist,
+            'collection_type'=> $collection_type,
         ]);
     }
 
@@ -92,6 +99,11 @@ class Appointments extends BaseController
             $token = csrf_hash();
             $postData = $request->getPost();
             $request = service('request');
+            if ($postData['share']=='1') {
+                $share= $companydata->agenda_code;
+            }else{
+                $share='00';
+            }
             $newevent = new eventcalendar();
             $data = [
                 'idcompany' => $companydata->id_company,
@@ -99,12 +111,17 @@ class Appointments extends BaseController
                 'start_time' => $postData['timestart'],
                 'end_time' => $postData['timeend'],
                 'place_event' => $postData['placeevent'],
-                'company_agenda_code' => null,
+                'company_agenda_code' =>$share,
+                'dsangue' => $postData['dsangue'],
+                'dplasma'=>$postData['dplasma'],
+                'dpiastrine'=>$postData['dpiastrine'],
             ];
             $newevent->save($data);
+            $id=$newevent->getInsertID();
             $risposta = [
                 'record' => $data,
                 'token' => $token,
+                'id'=>$id,
             ];
             header('Content-Type: application/json');
 

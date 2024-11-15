@@ -1,6 +1,10 @@
 <?php
 
 return [
+    'Privacyaceptheader'=> 'Informativa sulla Privacy',
+    'Privacyaceptfooter'=> 'l\'Informativa sulla Privacy non è stata ancora accettata',
+    'privacyaccept'=>'Acconsento',
+    'privacyreject'=>'Rifiuto',
     'privacyrequired'=> 'Il testo Privacy è obbligatorio',
     'privacyEdit'=>'Edit policy',
     'privacyactive'=>'Policy Attiva',

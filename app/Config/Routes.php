@@ -49,13 +49,16 @@ $routes->group('', ['filter' => 'login'], static function ($routes) {
     $routes->post('InsertPrivacyPolicy','CompanyController::InsertPrivacyPolicy',['filter'=> 'login:admin.InsertPrivacyPolicy']);
     $routes->post('saveprivacypolicy'  ,'CompanyController::Saveprivacypolicy',  ['filter'=> 'login:admin.InsertPrivacyPolicy']);
     $routes->post('editpolicy',        'CompanyController::editpolicy',['filter'=> 'login:admin.InsertPrivacyPolicy']);
-    $routes->post('activepolicy',        'CompanyController::activepolicy', ['filter' => 'login:admin.InsertPrivacyPolicy']);
+    $routes->post('activepolicy',      'CompanyController::activepolicy', ['filter' => 'login:admin.InsertPrivacyPolicy']);
+    $routes->post('privacyaccept',     'PrivacyController::privacyaccept',['filter'=> 'login:user.homeaccess']);
     $routes->post('ManageCalendar', 'appointments::ManageCalendar', ['filter' => 'login:admin.createappointments']);
     $routes->post('insertRepetitiveDays', 'appointments::insertRepetitiveDays', ['filter' => 'login:admin.createappointments']);
     $routes->post('addevent', 'Appointments::addevent', ['filter=>login:admin.createappointments']);
     $routes->post('delevent', 'Appointments::delevent', ['filter=>login:admin.createappointments']);
     $routes->post('appointmentdettail','Appointments::appointmentdettail',['filter'=>'login:admin.createappointments']);
     $routes->post('appointmentconfirm','Appointments::appointmentconfirm',['filter'=>'login:admin.createappointments']);
+   
+   
     // user
     $routes->get('Homeuser', 'UserController::index', ['filter=>login:user.homeaccess']);
     $routes->post('UpdateAvatarImage', 'UserController::updateAvatarimage', ['filter=>login:user.homeaccess']);

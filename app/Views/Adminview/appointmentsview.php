@@ -197,7 +197,8 @@
                                     <td><?php echo esc($event->start_time); ?></td>
                                     <td><?php echo esc($event->end_time); ?></td>
                                     <td><?php echo esc($event->place_event); ?></td>
-                                    <td><button onclick="delvent(<?php echo($event->id_eventcalendar); ?>)" class="w3-btn"> <i class="fa fa-trash" aria-hidden="true"></i></i></button>
+                                    <td><button onclick="delvent(<?php echo ($event->id_eventcalendar); ?>)"
+                                            class="w3-btn"> <i class="fa fa-trash" aria-hidden="true"></i></i></button>
                                     </td>
                                 </tr>
                             <?php } ?>
@@ -206,32 +207,61 @@
                 </div>
                 <div class="w3-container" id="forminput">
                     <div class="w3-row">
-                        <div class="w3-quarter">
+                        <div class="w3-third">
                             <label for="DateEvent"><?php echo lang('Auth.EventDate'); ?></label>
                             <input type="date" name="DateEvent" id="DateEvent"
                                 class="w3-input w3-border w3-round-xlarge">
                         </div>
-                        <div class="w3-quarter ">
+                        <div class="w3-third ">
                             <label for="StartTime"><?php echo lang('Auth.StartTime'); ?></label>
                             <input type="time" name="StartTime" id="StartTime"
                                 class="w3-input w3-border w3-round-xlarge">
                         </div>
-                        <div class="w3-quarter  ">
+                        <div class="w3-third  ">
                             <label for="EndTime"><?php echo lang('Auth.EndTime'); ?></label>
                             <input type="time" name="EndTime" id="EndTime"
                                 class="w3-input w3-border w3-round-xlarge">
                         </div>
                     </div>
-                    <div>
+                    <div class="w3-row w3-container">
+                        <div class="w3-quarter">
+                            <?php if (($collection_type['dsangue'] != null) && ($collection_type['dsangue'] != 0)): ?>
+                                <input type="checkbox" name="dsangue" id="dsangue"
+                                    class=" w3-check  w3-checkbox w3-border w3-round-xlarge" value="1">
+                                <?php echo esc(lang('Auth.DonazioneSangue'));  ?>
+                            <?php endif; ?>
+                        </div>
+                        <div class="w3-quarter">
+                            <?php if (($collection_type['dplasma'] != null) && ($collection_type['dplasma'] != 0)): ?>
+                                <input type="checkbox" name="dplasma" id="dplasma"
+                                    class="w3-check w3-border w3-round-xlarge" value="1">
+                                <?php echo esc(lang('Auth.DonazionePlasma')); ?>
+                            <?php endif; ?>
+                        </div>
+                        <div class="w3-quarter">
+                            <?php if (($collection_type['dpiastrine'] != null) && ($collection_type['dpiastrine'] != 0)): ?>
+                                <input type="checkbox" name="dpiastrine" id="dpiastrine"
+                                    class="w3-check w3-border w3-round-xlarge" value="1">
+                                <?php echo esc(lang('Auth.DonazionePiastrine')); ?>
+                            <?php endif; ?>
+                        </div>
+                        <div class="w3-quarter">
+                            <input type="checkbox" name="share" id="share"
+                                class="w3-check w3-border w3-round-xlarge" value="1">
+                            <?= esc(lang('Auth.visibility')); ?>
+                        </div>
+                    </div>
+                    <div class="w3-row w3-container">
                         <div class="w3-half">
                             <label for="PlaceEvent"><?php echo lang('Auth.EventPlace'); ?></label>
                             <input type="text" name="PlaceEvent" id="PlaceEvent"
                                 class="w3-input w3-border w3-round-xlarge">
                         </div>
-                        <div class="w3-half" style="float: right; margin-top: 15px;">
-                            <button class="w3-btn w3-xxlarge" id="addeventday">
-                                <i class="fa fa-save" aria-hidden="true"></i></button>
-                        </div>
+
+                    </div>
+                    <div class="w3-half" style="float: right; margin-top: 15px;">
+                        <button class="w3-btn w3-xxlarge" id="addeventday">
+                            <i class="fa fa-save" aria-hidden="true"></i></button>
                     </div>
                 </div>
             </div>
@@ -286,11 +316,11 @@
             dataType: "json",
             success: function(response) {
                 $('#loading').hide();
-                 $('input[name="csrf_token"]').val(response.token);
-                if(response.msg=='ok'){
-                $('#row'+ response.id).remove();
+                $('input[name="csrf_token"]').val(response.token);
+                if (response.msg == 'ok') {
+                    $('#row' + response.id).remove();
                 }
-                if(response.msg=='fail'){
+                if (response.msg == 'fail') {
                     alert('errore del');
                 }
             }
@@ -335,7 +365,8 @@
 
                         const isValidTimePair = (openTime, closeTime) => {
                             // Se uno è null e l'altro no, o se sono uguali ma non entrambi null, errore
-                            return !((openTime === null) !== (closeTime === null) || (openTime !== null && openTime === closeTime));
+                            return !((openTime === null) !== (closeTime === null) || (
+                                openTime !== null && openTime === closeTime));
                         };
 
 
@@ -387,10 +418,21 @@
                 }
             });
         });
+
+
         $('#addeventday').click(function(e) {
             e.preventDefault();
+
+            function getCheckboxValue(id) {
+                return $(id).length > 0 && $(id).is(':checked') ? 1 : 0;
+            }
             var csrfName = 'csrf_token'; // Nome del token CSRF
             var csrfHash = $('input[name="csrf_token"]').val();
+            let dsangue = getCheckboxValue('#dsangue');
+            let dplasma = getCheckboxValue('#dplasma');
+            let dpiastrine = getCheckboxValue('#dpiastrine');
+            let share = getCheckboxValue('#share');
+
             $.ajax({
                 type: "post",
                 url: "<?php echo site_url('addevent'); ?>",
@@ -400,17 +442,23 @@
                     'timestart': $('#StartTime').val(),
                     'timeend': $('#EndTime').val(),
                     'placeevent': $('#PlaceEvent').val(),
+                    'dsangue': dsangue,
+                    'dplasma': dplasma,
+                    'dpiastrine': dpiastrine,
+                    'share': share,
                 },
                 dataType: "json",
                 success: function(response) {
+                    console.log(response);
                     $('input[name="csrf_token"]').val(response.token);
                     $('#listappointment > tbody:last-child').append(
-                        '<tr>' +
-                        '<td>' + formatDateToItalian(response.record.day_event) + '</td>' +
+                        '<tr id="row' + response.id + '">' +
+                        '<td>' + formatDateToItalian(response.record.day_event) +
+                        '</td>' +
                         '<td>' + response.record.start_time + '</td>' +
                         '<td>' + response.record.end_time + '</td>' +
                         '<td>' + response.record.place_event + '</td>' +
-                        '<td> <button class="w3-btn"><i class="fa fa-trash" aria-hidden="true"></i></button> </td> </tr>'
+                        '<td> <button class="w3-btn"><i class="fa fa-trash" aria-hidden="true" onclick="delvent(' + response.id + ')"></i></button> </td> </tr>'
                     );
                     $('#DateEvent').val('');
                     $('#StartTime').val('');

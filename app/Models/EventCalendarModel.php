@@ -12,7 +12,8 @@ class EventCalendarModel extends Model
     protected $returnType = \App\Entities\EventCalendarEntity::class;
     protected $useSoftDeletes = false;
     protected $protectFields = true;
-    protected $allowedFields = ['idcompany', 'day_event', 'start_time', 'end_time', 'place_event', 'company_agenda_code'];
+    protected $allowedFields = ['idcompany', 'day_event', 'start_time', 'end_time', 'place_event','company_agenda_code',
+                                'dsangue', 'dpiastrine', 'dplasma'];
 
     protected bool $allowEmptyInserts = false;
     protected bool $updateOnlyChanged = true;
