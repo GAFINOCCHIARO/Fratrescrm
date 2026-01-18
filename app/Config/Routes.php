@@ -7,7 +7,7 @@ use Faker\Provider\ar_EG\Company;
 /*
  * @var RouteCollection $routes
  */
-$routes->get('prova','prova::index');
+//$routes->get('prova','prova::index');
 $routes->setDefaultNamespace('App\Controllers');
 $routes->get('/', 'Home::index');
 $routes->get('Nuova_azienda', 'CompanyController::NewCompanyviews');
