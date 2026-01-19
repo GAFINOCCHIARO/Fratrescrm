@@ -1,6 +1,5 @@
-# FratresCRM
+# 
 
-FratresCRM è una web application progettata per la gestione digitale delle associazioni **Fratres** e di realtà simili operanti nel settore della donazione del sangue.
 
 L'obiettivo del progetto è fornire uno strumento centralizzato per:
 - la gestione delle aziende/associazioni
