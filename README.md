@@ -40,7 +40,7 @@ L'obiettivo del progetto è fornire uno strumento centralizzato per:
 
 2. Entra nella cartella del progetto:
    ```bash
-   cd fratres_app
+   cd nome app
    ```
 
 3. Crea il file `.env` partendo dall'esempio:
@@ -70,7 +70,7 @@ Questo progetto è distribuito sotto licenza **MIT**.
 
 ## 👤 Autore
 
-**GAFINOCCHIARO**  
+
 Sviluppatore Web
 
 ---
